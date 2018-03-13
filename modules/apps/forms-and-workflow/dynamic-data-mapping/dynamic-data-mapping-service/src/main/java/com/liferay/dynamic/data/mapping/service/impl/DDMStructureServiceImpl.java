@@ -429,6 +429,46 @@ public class DDMStructureServiceImpl extends DDMStructureServiceBaseImpl {
 			orderByComparator);
 	}
 
+	/**
+	 * Returns a range of all the structures matching the class name ID and
+	 * belonging to the groups.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end -
+	 * start</code> instances. <code>start</code> and <code>end</code> are not
+	 * primary keys, they are indexes in the result set. Thus, <code>0</code>
+	 * refers to the first result in the set. Setting both <code>start</code>
+	 * and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full
+	 * result set.
+	 * </p>
+	 *
+	 * @param groupIds the primary keys of the groups
+	 * @param classNameId the primary key of the class name for the structure's
+	related model
+	 * @param start the lower bound of the range of structures to return
+	 * @param end the upper bound of the range of structures to return (not
+	inclusive)
+	 * @return the range of matching structures
+	 */
+	@Override
+	public List<DDMStructure> getStructures(long[] groupIds, long classNameId,
+		int start, int end) {
+
+		return ddmStructureLocalService.getStructures(
+			groupIds, classNameId, start, end);
+	}
+
+	/**
+	 * Returns the number of structures belonging to the group.
+	 *
+	 * @param groupId the primary key of the group
+	 * @return the number of structures belonging to the group
+	 */
+	@Override
+	public int getStructuresCount(long groupId) {
+		return ddmStructureLocalService.getStructuresCount(groupId);
+	}
+
 	@Override
 	public void revertStructure(
 			long structureId, String version, ServiceContext serviceContext)
