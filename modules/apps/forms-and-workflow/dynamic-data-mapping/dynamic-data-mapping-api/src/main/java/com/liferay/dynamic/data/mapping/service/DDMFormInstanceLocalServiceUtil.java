@@ -364,6 +364,11 @@ public class DDMFormInstanceLocalServiceUtil {
 		return getService().getFormInstances(groupId);
 	}
 
+	public static java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance> getFormInstances(
+		long groupId, int start, int end) {
+		return getService().getFormInstances(groupId, start, end);
+	}
+
 	public static int getFormInstancesCount(long groupId) {
 		return getService().getFormInstancesCount(groupId);
 	}

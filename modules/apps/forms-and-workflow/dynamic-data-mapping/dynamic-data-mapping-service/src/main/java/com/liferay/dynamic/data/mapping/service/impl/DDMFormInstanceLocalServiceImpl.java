@@ -225,6 +225,12 @@ public class DDMFormInstanceLocalServiceImpl
 		return ddmFormInstancePersistence.findByGroupId(groupId);
 	}
 
+	public List<DDMFormInstance> getFormInstances(
+		long groupId, int start, int end) {
+
+		return ddmFormInstancePersistence.findByGroupId(groupId, start, end);
+	}
+
 	@Override
 	public int getFormInstancesCount(long groupId) {
 		return ddmFormInstancePersistence.countByGroupId(groupId);

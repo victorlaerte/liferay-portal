@@ -311,6 +311,10 @@ public interface DDMFormInstanceLocalService extends BaseLocalService,
 	public List<DDMFormInstance> getFormInstances(long groupId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMFormInstance> getFormInstances(long groupId, int start,
+		int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getFormInstancesCount(long groupId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
