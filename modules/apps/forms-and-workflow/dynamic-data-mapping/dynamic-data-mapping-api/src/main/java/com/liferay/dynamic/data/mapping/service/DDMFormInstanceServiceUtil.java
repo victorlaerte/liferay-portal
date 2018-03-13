@@ -71,8 +71,14 @@ public class DDMFormInstanceServiceUtil {
 	}
 
 	public static java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance> getFormInstances(
-		long[] groupIds) {
-		return getService().getFormInstances(groupIds);
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getFormInstances(groupId, start, end);
+	}
+
+	public static int getFormInstancesCount(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getFormInstancesCount(groupId);
 	}
 
 	/**

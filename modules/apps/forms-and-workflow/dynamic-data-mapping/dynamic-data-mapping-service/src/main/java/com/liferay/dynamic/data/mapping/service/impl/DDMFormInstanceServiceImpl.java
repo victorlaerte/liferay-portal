@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermi
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermissionFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.util.List;
@@ -92,8 +93,23 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 	}
 
 	@Override
-	public List<DDMFormInstance> getFormInstances(long[] groupIds) {
-		return ddmFormInstancePersistence.findByGroupId(groupIds);
+	public List<DDMFormInstance> getFormInstances(
+			long groupId, int start, int end)
+		throws PortalException {
+
+		GroupPermissionUtil.check(
+			getPermissionChecker(), groupId, ActionKeys.VIEW);
+
+		return ddmFormInstanceLocalService.getFormInstances(
+			groupId, start, end);
+	}
+
+	@Override
+	public int getFormInstancesCount(long groupId) throws PortalException {
+		GroupPermissionUtil.check(
+			getPermissionChecker(), groupId, ActionKeys.VIEW);
+
+		return ddmFormInstanceLocalService.getFormInstancesCount(groupId);
 	}
 
 	@Override
