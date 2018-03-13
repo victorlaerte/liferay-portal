@@ -19,24 +19,22 @@ package com.liferay.forms.apio.internal.architect.resource;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
 import com.liferay.apio.architect.representor.Representor;
-import com.liferay.apio.architect.resource.CollectionResource;
-import com.liferay.apio.architect.routes.CollectionRoutes;
+import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
+import com.liferay.apio.architect.routes.NestedCollectionRoutes;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
-import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceId;
+import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.GroupConstants;
-import com.liferay.portal.kernel.service.GroupService;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
+import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
 
 import java.util.List;
 
 import javax.ws.rs.ServerErrorException;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * Provides the information necessary to expose FormInstance resources through
@@ -46,14 +44,15 @@ import javax.ws.rs.ServerErrorException;
  */
 @Component(immediate = true)
 public class FormInstanceCollectionResource
-	implements CollectionResource<DDMFormInstance, Long, FormInstanceId> {
+	implements NestedCollectionResource<DDMFormInstance, Long, FormInstanceId,
+		Long, WebSiteIdentifier> {
 
 	@Override
-	public CollectionRoutes<DDMFormInstance> collectionRoutes(
-		CollectionRoutes.Builder<DDMFormInstance> builder) {
+	public NestedCollectionRoutes<DDMFormInstance, Long> collectionRoutes(
+		NestedCollectionRoutes.Builder<DDMFormInstance, Long> builder) {
 
 		return builder.addGetter(
-			this::_getPageItems, Company.class
+			this::_getPageItems
 		).build();
 	}
 
@@ -79,15 +78,38 @@ public class FormInstanceCollectionResource
 			"FormInstance"
 		).identifier(
 			DDMFormInstance::getFormInstanceId
+		).addDate(
+			"createDate", DDMFormInstance::getCreateDate
+		).addDate(
+			"modifiedDate", DDMFormInstance::getCreateDate
+		).addDate(
+			"lastPublishDate", DDMFormInstance::getLastPublishDate
 		).addLocalizedString(
 			"description",
 			(ddmFormInstance, language) -> ddmFormInstance.getDescription(
 				language.getPreferredLocale())
+		).addLocalizedString(
+			"name",
+			(ddmFormInstance, language) -> ddmFormInstance.getName(
+				language.getPreferredLocale())
 		).addNumber(
 			"companyId", DDMFormInstance::getCompanyId
+		).addNumber(
+			"groupId", DDMFormInstance::getGroupId
+		).addNumber(
+			"userId", DDMFormInstance::getUserId
+		).addNumber(
+			"versionUserId", DDMFormInstance::getVersionUserId
+		).addString(
+			"userName", DDMFormInstance::getUserName
+		).addString(
+			"settings", DDMFormInstance::getSettings
+		).addString(
+			"versionUserName", DDMFormInstance::getVersionUserName
+		).addString(
+			"version", DDMFormInstance::getVersion
 		).addLinkedModel(
-			"structure",
-			StructureIdentifier.class,
+			"structure", StructureIdentifier.class,
 			DDMFormInstance::getStructureId
 		).build();
 	}
@@ -101,25 +123,18 @@ public class FormInstanceCollectionResource
 	}
 
 	private PageItems<DDMFormInstance> _getPageItems(
-		Pagination pagination, Company company) {
+		Pagination pagination, Long groupId) {
 
 		try {
-			List<Group> groups = _groupService.getGroups(company.getCompanyId(),
-				GroupConstants.ANY_PARENT_GROUP_ID, false);
-
-			long[] groupIds =
-				groups.stream().mapToLong(Group::getGroupId).toArray();
-
 			List<DDMFormInstance> ddmFormInstances =
 				_ddmFormInstanceService.getFormInstances(
-					groupIds, pagination.getStartPosition(),
-					pagination.getEndPosition());
+					groupId, pagination.getStartPosition(),
+				pagination.getEndPosition());
 
-			int count = _ddmFormInstanceService.countByGroupId(groupIds);
+			int count = _ddmFormInstanceService.getFormInstancesCount(groupId);
 
 			return new PageItems<>(ddmFormInstances, count);
-		}
-		catch (PortalException pe) {
+		} catch (PortalException pe) {
 			throw new ServerErrorException(500, pe);
 		}
 	}
@@ -127,6 +142,4 @@ public class FormInstanceCollectionResource
 	@Reference
 	private DDMFormInstanceService _ddmFormInstanceService;
 
-	@Reference
-	private GroupService _groupService;
 }
