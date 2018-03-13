@@ -46,11 +46,6 @@ public class DDMFormInstanceServiceWrapper implements DDMFormInstanceService,
 	}
 
 	@Override
-	public int countByGroupId(long[] groupIds) {
-		return _ddmFormInstanceService.countByGroupId(groupIds);
-	}
-
-	@Override
 	public void deleteFormInstance(long ddmFormInstanceId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_ddmFormInstanceService.deleteFormInstance(ddmFormInstanceId);
@@ -74,12 +69,6 @@ public class DDMFormInstanceServiceWrapper implements DDMFormInstanceService,
 	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance> getFormInstances(
 		long[] groupIds) {
 		return _ddmFormInstanceService.getFormInstances(groupIds);
-	}
-
-	@Override
-	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance> getFormInstances(
-		long[] groupIds, int start, int end) {
-		return _ddmFormInstanceService.getFormInstances(groupIds, start, end);
 	}
 
 	/**

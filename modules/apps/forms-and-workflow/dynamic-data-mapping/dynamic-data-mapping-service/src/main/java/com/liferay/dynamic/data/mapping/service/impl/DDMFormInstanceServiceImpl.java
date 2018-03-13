@@ -54,11 +54,6 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 	}
 
 	@Override
-	public int countByGroupId(long[] groupIds) {
-		return ddmFormInstancePersistence.countByGroupId(groupIds);
-	}
-
-	@Override
 	public void deleteFormInstance(long ddmFormInstanceId)
 		throws PortalException {
 
@@ -99,13 +94,6 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 	@Override
 	public List<DDMFormInstance> getFormInstances(long[] groupIds) {
 		return ddmFormInstancePersistence.findByGroupId(groupIds);
-	}
-
-	@Override
-	public List<DDMFormInstance> getFormInstances(
-		long[] groupIds, int start, int end) {
-
-		return ddmFormInstancePersistence.findByGroupId(groupIds, start, end);
 	}
 
 	@Override

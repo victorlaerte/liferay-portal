@@ -65,8 +65,6 @@ public interface DDMFormInstanceService extends BaseService {
 		DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
 		throws PortalException;
 
-	public int countByGroupId(long[] groupIds);
-
 	public void deleteFormInstance(long ddmFormInstanceId)
 		throws PortalException;
 
@@ -80,10 +78,6 @@ public interface DDMFormInstanceService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DDMFormInstance> getFormInstances(long[] groupIds);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<DDMFormInstance> getFormInstances(long[] groupIds, int start,
-		int end);
 
 	/**
 	* Returns the OSGi service identifier.
