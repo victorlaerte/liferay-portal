@@ -58,7 +58,7 @@ public class FormInstanceCollectionResource
 
 	@Override
 	public String getName() {
-		return "form-instances";
+		return "form-instance";
 	}
 
 	@Override
