@@ -97,6 +97,19 @@ public class DDMFormInstanceServiceSoap {
 		}
 	}
 
+	public static int countByGroupId(long[] groupIds) throws RemoteException {
+		try {
+			int returnValue = DDMFormInstanceServiceUtil.countByGroupId(groupIds);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static void deleteFormInstance(long ddmFormInstanceId)
 		throws RemoteException {
 		try {
@@ -159,19 +172,6 @@ public class DDMFormInstanceServiceSoap {
 				DDMFormInstanceServiceUtil.getFormInstances(groupIds, start, end);
 
 			return com.liferay.dynamic.data.mapping.model.DDMFormInstanceSoap.toSoapModels(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static int countByGroupId(long[] groupIds) throws RemoteException {
-		try {
-			int returnValue = DDMFormInstanceServiceUtil.countByGroupId(groupIds);
-
-			return returnValue;
 		}
 		catch (Exception e) {
 			_log.error(e, e);

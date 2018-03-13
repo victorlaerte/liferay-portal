@@ -92,12 +92,38 @@ public class DDMFormInstanceServiceHttp {
 		}
 	}
 
+	public static int countByGroupId(HttpPrincipal httpPrincipal,
+		long[] groupIds) {
+		try {
+			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
+					"countByGroupId", _countByGroupIdParameterTypes1);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, groupIds);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return ((Integer)returnObj).intValue();
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	public static void deleteFormInstance(HttpPrincipal httpPrincipal,
 		long ddmFormInstanceId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
-					"deleteFormInstance", _deleteFormInstanceParameterTypes1);
+					"deleteFormInstance", _deleteFormInstanceParameterTypes2);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					ddmFormInstanceId);
@@ -125,7 +151,7 @@ public class DDMFormInstanceServiceHttp {
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
-					"fetchFormInstance", _fetchFormInstanceParameterTypes2);
+					"fetchFormInstance", _fetchFormInstanceParameterTypes3);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					ddmFormInstanceId);
@@ -157,7 +183,7 @@ public class DDMFormInstanceServiceHttp {
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
-					"getFormInstance", _getFormInstanceParameterTypes3);
+					"getFormInstance", _getFormInstanceParameterTypes4);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					ddmFormInstanceId);
@@ -188,7 +214,7 @@ public class DDMFormInstanceServiceHttp {
 		HttpPrincipal httpPrincipal, long[] groupIds) {
 		try {
 			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
-					"getFormInstances", _getFormInstancesParameterTypes4);
+					"getFormInstances", _getFormInstancesParameterTypes5);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, groupIds);
 
@@ -214,7 +240,7 @@ public class DDMFormInstanceServiceHttp {
 		HttpPrincipal httpPrincipal, long[] groupIds, int start, int end) {
 		try {
 			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
-					"getFormInstances", _getFormInstancesParameterTypes5);
+					"getFormInstances", _getFormInstancesParameterTypes6);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					groupIds, start, end);
@@ -229,32 +255,6 @@ public class DDMFormInstanceServiceHttp {
 			}
 
 			return (java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance>)returnObj;
-		}
-		catch (com.liferay.portal.kernel.exception.SystemException se) {
-			_log.error(se, se);
-
-			throw se;
-		}
-	}
-
-	public static int countByGroupId(HttpPrincipal httpPrincipal,
-		long[] groupIds) {
-		try {
-			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
-					"countByGroupId", _countByGroupIdParameterTypes6);
-
-			MethodHandler methodHandler = new MethodHandler(methodKey, groupIds);
-
-			Object returnObj = null;
-
-			try {
-				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
-			}
-			catch (Exception e) {
-				throw new com.liferay.portal.kernel.exception.SystemException(e);
-			}
-
-			return ((Integer)returnObj).intValue();
 		}
 		catch (com.liferay.portal.kernel.exception.SystemException se) {
 			_log.error(se, se);
@@ -455,23 +455,23 @@ public class DDMFormInstanceServiceHttp {
 			com.liferay.dynamic.data.mapping.storage.DDMFormValues.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _deleteFormInstanceParameterTypes1 = new Class[] {
-			long.class
-		};
-	private static final Class<?>[] _fetchFormInstanceParameterTypes2 = new Class[] {
-			long.class
-		};
-	private static final Class<?>[] _getFormInstanceParameterTypes3 = new Class[] {
-			long.class
-		};
-	private static final Class<?>[] _getFormInstancesParameterTypes4 = new Class[] {
+	private static final Class<?>[] _countByGroupIdParameterTypes1 = new Class[] {
 			long[].class
+		};
+	private static final Class<?>[] _deleteFormInstanceParameterTypes2 = new Class[] {
+			long.class
+		};
+	private static final Class<?>[] _fetchFormInstanceParameterTypes3 = new Class[] {
+			long.class
+		};
+	private static final Class<?>[] _getFormInstanceParameterTypes4 = new Class[] {
+			long.class
 		};
 	private static final Class<?>[] _getFormInstancesParameterTypes5 = new Class[] {
-			long[].class, int.class, int.class
-		};
-	private static final Class<?>[] _countByGroupIdParameterTypes6 = new Class[] {
 			long[].class
+		};
+	private static final Class<?>[] _getFormInstancesParameterTypes6 = new Class[] {
+			long[].class, int.class, int.class
 		};
 	private static final Class<?>[] _searchParameterTypes7 = new Class[] {
 			long.class, long.class, java.lang.String.class, int.class, int.class,
