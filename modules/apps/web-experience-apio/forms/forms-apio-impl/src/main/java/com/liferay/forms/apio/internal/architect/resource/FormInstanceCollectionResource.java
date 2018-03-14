@@ -27,6 +27,7 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.forms.apio.architect.identifier.FormInstanceId;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
@@ -54,7 +55,7 @@ public class FormInstanceCollectionResource
 		NestedCollectionRoutes.Builder<DDMFormInstance, Long> builder) {
 
 		return builder.addGetter(
-			this::_getPageItems
+			this::_getPageItems, Company.class
 		).build();
 	}
 
@@ -128,23 +129,17 @@ public class FormInstanceCollectionResource
 	}
 
 	private PageItems<DDMFormInstance> _getPageItems(
-		Pagination pagination, Long groupId) {
+		Pagination pagination, Long groupId, Company company) {
 
-		try {
-			Group group = _groupLocalService.getGroup(groupId);
+		List<DDMFormInstance> ddmFormInstances =
+			_ddmFormInstanceService.getFormInstances(
+				company.getCompanyId(), groupId,
+				pagination.getStartPosition(), pagination.getEndPosition());
 
-			List<DDMFormInstance> ddmFormInstances =
-				_ddmFormInstanceService.getFormInstances(
-					group.getCompanyId(), groupId,
-					pagination.getStartPosition(), pagination.getEndPosition());
+		int count = _ddmFormInstanceService.getFormInstancesCount(
+			company.getCompanyId(), groupId);
 
-			int count = _ddmFormInstanceService.getFormInstancesCount(
-				group.getCompanyId(), groupId);
-
-			return new PageItems<>(ddmFormInstances, count);
-		} catch (PortalException pe) {
-			throw new ServerErrorException(500, pe);
-		}
+		return new PageItems<>(ddmFormInstances, count);
 	}
 
 	@Reference
