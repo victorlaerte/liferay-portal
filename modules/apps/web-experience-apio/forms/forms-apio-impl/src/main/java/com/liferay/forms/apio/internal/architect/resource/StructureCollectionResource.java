@@ -17,7 +17,7 @@ package com.liferay.forms.apio.internal.architect.resource;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
 import com.liferay.apio.architect.representor.Representor;
-import com.liferay.apio.architect.resource.CollectionResource;
+import com.liferay.apio.architect.resource.ItemResource;
 import com.liferay.apio.architect.routes.CollectionRoutes;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
@@ -46,16 +46,7 @@ import javax.ws.rs.ServerErrorException;
  */
 @Component(immediate = true)
 public class StructureCollectionResource implements
-	CollectionResource<DDMStructure, Long, StructureIdentifier> {
-
-	@Override
-	public CollectionRoutes<DDMStructure> collectionRoutes(
-		CollectionRoutes.Builder<DDMStructure> builder) {
-
-		return builder.addGetter(
-			this::_getPageItems, Company.class
-		).build();
-	}
+	ItemResource<DDMStructure, Long, StructureIdentifier> {
 
 	@Override
 	public String getName() {
@@ -101,40 +92,7 @@ public class StructureCollectionResource implements
 		}
 	}
 
-	private PageItems<DDMStructure> _getPageItems(
-		Pagination pagination, Company company) {
-
-		try {
-			List<Group> groups = _groupService.getGroups(company.getCompanyId(),
-				GroupConstants.ANY_PARENT_GROUP_ID, false);
-
-			long[] groupIds =
-				groups.stream().mapToLong(Group::getGroupId).toArray();
-
-			long classNameId =
-				_classNameLocalService.getClassNameId(DDMFormInstance.class);
-
-			List<DDMStructure> ddmStructures =
-				_ddmStructureLocalService.getStructures(
-					groupIds, classNameId, pagination.getStartPosition(),
-					pagination.getEndPosition());
-
-			int count = _ddmStructureLocalService.getStructuresCount(
-				company.getGroupId());
-
-			return new PageItems<>(ddmStructures, count);
-		}
-		catch(PortalException pe) {
-			throw new ServerErrorException(500, pe);
-		}
-	}
-
-	@Reference
-	private ClassNameLocalService _classNameLocalService;
-
 	@Reference
 	private DDMStructureLocalService _ddmStructureLocalService;
 
-	@Reference
-	private GroupService _groupService;
 }
