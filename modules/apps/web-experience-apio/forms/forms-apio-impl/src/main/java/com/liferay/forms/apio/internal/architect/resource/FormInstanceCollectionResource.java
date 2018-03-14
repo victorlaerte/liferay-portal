@@ -84,7 +84,7 @@ public class FormInstanceCollectionResource
 		).addDate(
 			"createDate", DDMFormInstance::getCreateDate
 		).addDate(
-			"modifiedDate", DDMFormInstance::getCreateDate
+			"modifiedDate", DDMFormInstance::getModifiedDate
 		).addDate(
 			"lastPublishDate", DDMFormInstance::getLastPublishDate
 		).addLocalizedString(

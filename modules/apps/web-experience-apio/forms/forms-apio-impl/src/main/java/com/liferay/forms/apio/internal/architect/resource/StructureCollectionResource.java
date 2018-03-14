@@ -70,6 +70,36 @@ public class StructureCollectionResource implements
 			"Structure"
 		).identifier(
 			DDMStructure::getStructureId
+		).addDate(
+			"createDate", DDMStructure::getCreateDate
+		).addDate(
+			"modifiedDate", DDMStructure::getCreateDate
+		).addDate(
+			"lastPublishDate", DDMStructure::getLastPublishDate
+		).addNumber(
+			"companyId", DDMStructure::getCompanyId
+		).addNumber(
+			"groupId", DDMStructure::getGroupId
+		).addNumber(
+			"userId", DDMStructure::getUserId
+		).addString(
+			"userName", DDMStructure::getUserName
+		).addNumber(
+			"versionUserId", DDMStructure::getVersionUserId
+		).addString(
+			"versionUserName", DDMStructure::getVersionUserName
+		).addString(
+			"version", DDMStructure::getVersion
+		).addNumber(
+			"parentStructureId", DDMStructure::getParentStructureId
+		).addNumber(
+			"classNameId", DDMStructure::getClassNameId
+		).addString(
+			"structureKey", DDMStructure::getStructureKey
+		).addString(
+			"storageType", DDMStructure::getStorageType
+		).addNumber(
+			"type", DDMStructure::getType
 		).addLocalizedString(
 			"description",
 			(ddmStructure, language) -> ddmStructure.getDescription(
