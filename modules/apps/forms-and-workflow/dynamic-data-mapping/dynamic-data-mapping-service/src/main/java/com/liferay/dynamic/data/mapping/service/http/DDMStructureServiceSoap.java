@@ -550,44 +550,6 @@ public class DDMStructureServiceSoap {
 		}
 	}
 
-	/**
-	* Returns a range of all the structures matching the class name ID and
-	* belonging to the groups.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end -
-	* start</code> instances. <code>start</code> and <code>end</code> are not
-	* primary keys, they are indexes in the result set. Thus, <code>0</code>
-	* refers to the first result in the set. Setting both <code>start</code>
-	* and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full
-	* result set.
-	* </p>
-	*
-	* @param groupIds the primary keys of the groups
-	* @param classNameId the primary key of the class name for the structure's
-	related model
-	* @param start the lower bound of the range of structures to return
-	* @param end the upper bound of the range of structures to return (not
-	inclusive)
-	* @return the range of matching structures
-	*/
-	public static com.liferay.dynamic.data.mapping.model.DDMStructureSoap[] getStructures(
-		long[] groupIds, long classNameId, int start, int end)
-		throws RemoteException {
-		try {
-			java.util.List<com.liferay.dynamic.data.mapping.model.DDMStructure> returnValue =
-				DDMStructureServiceUtil.getStructures(groupIds, classNameId,
-					start, end);
-
-			return com.liferay.dynamic.data.mapping.model.DDMStructureSoap.toSoapModels(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
 	public static com.liferay.dynamic.data.mapping.model.DDMStructureSoap[] getStructures(
 		long companyId, long[] groupIds, long classNameId, int status,
 		int start, int end,
@@ -599,26 +561,6 @@ public class DDMStructureServiceSoap {
 					classNameId, status, start, end, orderByComparator);
 
 			return com.liferay.dynamic.data.mapping.model.DDMStructureSoap.toSoapModels(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	/**
-	* Returns the number of structures belonging to the group.
-	*
-	* @param groupId the primary key of the group
-	* @return the number of structures belonging to the group
-	*/
-	public static int getStructuresCount(long groupId)
-		throws RemoteException {
-		try {
-			int returnValue = DDMStructureServiceUtil.getStructuresCount(groupId);
-
-			return returnValue;
 		}
 		catch (Exception e) {
 			_log.error(e, e);
