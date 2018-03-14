@@ -25,6 +25,8 @@ public interface DDMFormInstanceFinder {
 	public int countByKeywords(long companyId, long groupId,
 		java.lang.String keywords);
 
+	public int countByC_G(long companyId, long groupId);
+
 	public int countByC_G_N_D(long companyId, long groupId,
 		java.lang.String[] names, java.lang.String[] descriptions,
 		boolean andOperator);
@@ -46,6 +48,9 @@ public interface DDMFormInstanceFinder {
 		java.lang.String[] descriptions, boolean andOperator, int start,
 		int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMFormInstance> orderByComparator);
+
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance> filterFindByC_G(
+		long companyId, long groupId, int start, int end);
 
 	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance> findByKeywords(
 		long companyId, long groupId, java.lang.String keywords, int start,

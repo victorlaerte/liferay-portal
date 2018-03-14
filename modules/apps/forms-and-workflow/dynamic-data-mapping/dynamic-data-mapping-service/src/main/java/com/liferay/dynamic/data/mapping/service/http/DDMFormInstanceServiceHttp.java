@@ -185,14 +185,14 @@ public class DDMFormInstanceServiceHttp {
 	}
 
 	public static java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance> getFormInstances(
-		HttpPrincipal httpPrincipal, long groupId, int start, int end)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		HttpPrincipal httpPrincipal, long companyId, long groupId, int start,
+		int end) {
 		try {
 			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
 					"getFormInstances", _getFormInstancesParameterTypes4);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
-					start, end);
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					companyId, groupId, start, end);
 
 			Object returnObj = null;
 
@@ -200,10 +200,6 @@ public class DDMFormInstanceServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception e) {
-				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
-					throw (com.liferay.portal.kernel.exception.PortalException)e;
-				}
-
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -217,14 +213,14 @@ public class DDMFormInstanceServiceHttp {
 	}
 
 	public static int getFormInstancesCount(HttpPrincipal httpPrincipal,
-		long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		long companyId, long groupId) {
 		try {
 			MethodKey methodKey = new MethodKey(DDMFormInstanceServiceUtil.class,
 					"getFormInstancesCount",
 					_getFormInstancesCountParameterTypes5);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey, groupId);
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					companyId, groupId);
 
 			Object returnObj = null;
 
@@ -232,10 +228,6 @@ public class DDMFormInstanceServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception e) {
-				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
-					throw (com.liferay.portal.kernel.exception.PortalException)e;
-				}
-
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -450,10 +442,10 @@ public class DDMFormInstanceServiceHttp {
 			long.class
 		};
 	private static final Class<?>[] _getFormInstancesParameterTypes4 = new Class[] {
-			long.class, int.class, int.class
+			long.class, long.class, int.class, int.class
 		};
 	private static final Class<?>[] _getFormInstancesCountParameterTypes5 = new Class[] {
-			long.class
+			long.class, long.class
 		};
 	private static final Class<?>[] _searchParameterTypes6 = new Class[] {
 			long.class, long.class, java.lang.String.class, int.class, int.class,

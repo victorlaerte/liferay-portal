@@ -27,6 +27,8 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.forms.apio.architect.identifier.FormInstanceId;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
 
 import java.util.List;
@@ -129,12 +131,15 @@ public class FormInstanceCollectionResource
 		Pagination pagination, Long groupId) {
 
 		try {
+			Group group = _groupLocalService.getGroup(groupId);
+
 			List<DDMFormInstance> ddmFormInstances =
 				_ddmFormInstanceService.getFormInstances(
-					groupId, pagination.getStartPosition(),
-				pagination.getEndPosition());
+					group.getCompanyId(), groupId,
+					pagination.getStartPosition(), pagination.getEndPosition());
 
-			int count = _ddmFormInstanceService.getFormInstancesCount(groupId);
+			int count = _ddmFormInstanceService.getFormInstancesCount(
+				group.getCompanyId(), groupId);
 
 			return new PageItems<>(ddmFormInstances, count);
 		} catch (PortalException pe) {
@@ -144,5 +149,8 @@ public class FormInstanceCollectionResource
 
 	@Reference
 	private DDMFormInstanceService _ddmFormInstanceService;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 }

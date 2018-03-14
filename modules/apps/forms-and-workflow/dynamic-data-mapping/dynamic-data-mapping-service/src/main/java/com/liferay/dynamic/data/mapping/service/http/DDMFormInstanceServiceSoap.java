@@ -138,10 +138,12 @@ public class DDMFormInstanceServiceSoap {
 	}
 
 	public static com.liferay.dynamic.data.mapping.model.DDMFormInstanceSoap[] getFormInstances(
-		long groupId, int start, int end) throws RemoteException {
+		long companyId, long groupId, int start, int end)
+		throws RemoteException {
 		try {
 			java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance> returnValue =
-				DDMFormInstanceServiceUtil.getFormInstances(groupId, start, end);
+				DDMFormInstanceServiceUtil.getFormInstances(companyId, groupId,
+					start, end);
 
 			return com.liferay.dynamic.data.mapping.model.DDMFormInstanceSoap.toSoapModels(returnValue);
 		}
@@ -152,10 +154,11 @@ public class DDMFormInstanceServiceSoap {
 		}
 	}
 
-	public static int getFormInstancesCount(long groupId)
+	public static int getFormInstancesCount(long companyId, long groupId)
 		throws RemoteException {
 		try {
-			int returnValue = DDMFormInstanceServiceUtil.getFormInstancesCount(groupId);
+			int returnValue = DDMFormInstanceServiceUtil.getFormInstancesCount(companyId,
+					groupId);
 
 			return returnValue;
 		}
