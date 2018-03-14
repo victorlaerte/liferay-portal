@@ -78,6 +78,9 @@ public class FormInstanceCollectionResource
 			"FormInstance"
 		).identifier(
 			DDMFormInstance::getFormInstanceId
+		).addBidirectionalModel(
+			"webSite", "form-instance", WebSiteIdentifier.class,
+			DDMFormInstance::getGroupId
 		).addDate(
 			"createDate", DDMFormInstance::getCreateDate
 		).addDate(
