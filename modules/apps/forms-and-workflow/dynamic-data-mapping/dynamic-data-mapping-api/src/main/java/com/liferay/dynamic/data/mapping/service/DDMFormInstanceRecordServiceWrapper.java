@@ -64,6 +64,12 @@ public class DDMFormInstanceRecordServiceWrapper
 		return _ddmFormInstanceRecordService.getFormInstanceRecords(ddmFormInstanceId);
 	}
 
+	@Override
+	public int getFormInstanceRecordsCount(long ddmFormInstanceId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmFormInstanceRecordService.getFormInstanceRecordsCount(ddmFormInstanceId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*

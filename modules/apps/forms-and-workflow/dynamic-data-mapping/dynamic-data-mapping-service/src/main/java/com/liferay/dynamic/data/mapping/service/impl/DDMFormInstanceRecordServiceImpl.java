@@ -92,6 +92,16 @@ public class DDMFormInstanceRecordServiceImpl
 	}
 
 	@Override
+	public int getFormInstanceRecordsCount(long ddmFormInstanceId)
+		throws PortalException {
+		DDMFormInstancePermission.contains(
+			getPermissionChecker(), ddmFormInstanceId, ActionKeys.VIEW);
+
+		return ddmFormInstanceRecordLocalService.getFormInstanceRecordsCount(
+			ddmFormInstanceId);
+	}
+
+	@Override
 	public void revertFormInstanceRecord(
 			long ddmFormInstanceRecordId, String version,
 			ServiceContext serviceContext)

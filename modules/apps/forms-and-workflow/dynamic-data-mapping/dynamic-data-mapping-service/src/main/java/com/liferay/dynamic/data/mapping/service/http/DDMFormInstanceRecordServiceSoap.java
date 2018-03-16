@@ -126,6 +126,20 @@ public class DDMFormInstanceRecordServiceSoap {
 		}
 	}
 
+	public static int getFormInstanceRecordsCount(long ddmFormInstanceId)
+		throws RemoteException {
+		try {
+			int returnValue = DDMFormInstanceRecordServiceUtil.getFormInstanceRecordsCount(ddmFormInstanceId);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static void revertFormInstanceRecord(long ddmFormInstanceRecordId,
 		java.lang.String version,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
