@@ -154,6 +154,38 @@ public class DDMDataProviderInstanceServiceSoap {
 		}
 	}
 
+	public static com.liferay.dynamic.data.mapping.model.DDMDataProviderInstanceSoap[] getDataProviderInstances(
+		long companyId, long[] groupIds, int start, int end)
+		throws RemoteException {
+		try {
+			java.util.List<com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance> returnValue =
+				DDMDataProviderInstanceServiceUtil.getDataProviderInstances(companyId,
+					groupIds, start, end);
+
+			return com.liferay.dynamic.data.mapping.model.DDMDataProviderInstanceSoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static int getDataProviderInstancesCount(long companyId,
+		long[] groupIds) throws RemoteException {
+		try {
+			int returnValue = DDMDataProviderInstanceServiceUtil.getDataProviderInstancesCount(companyId,
+					groupIds);
+
+			return returnValue;
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.dynamic.data.mapping.model.DDMDataProviderInstanceSoap getDataProviderInstanceByUuid(
 		java.lang.String uuid) throws RemoteException {
 		try {
