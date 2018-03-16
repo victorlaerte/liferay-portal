@@ -1,4 +1,21 @@
+/*
+ * *
+ *  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *  *
+ *  * This library is free software; you can redistribute it and/or modify it under
+ *  * the terms of the GNU Lesser General Public License as published by the Free
+ *  * Software Foundation; either version 2.1 of the License, or (at your option)
+ *  * any later version.
+ *  *
+ *  * This library is distributed in the hope that it will be useful, but WITHOUT
+ *  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ *  * details.
+ *
+ */
+
 /**
+ *
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -10,6 +27,7 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
+ *
  */
 
 package com.liferay.forms.apio.internal.architect.resource;
@@ -20,21 +38,21 @@ import com.liferay.apio.architect.representor.Representor;
 import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
+import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
+import com.liferay.forms.apio.architect.identifier.DataProviderInstanceId;
 import com.liferay.forms.apio.architect.identifier.FormInstanceId;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
-
-import java.util.List;
-
-import javax.ws.rs.ServerErrorException;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import javax.ws.rs.ServerErrorException;
+import java.util.List;
 
 /**
  * Provides the information necessary to expose FormInstance resources through
@@ -43,27 +61,27 @@ import org.osgi.service.component.annotations.Reference;
  * @author Victor Oliveira
  */
 @Component(immediate = true)
-public class FormInstanceCollectionResource
-	implements NestedCollectionResource<DDMFormInstance, Long, FormInstanceId,
+public class DataProviderInstanceCollectionResource
+	implements NestedCollectionResource<DDMDataProviderInstance, Long, DataProviderInstanceId,
 		Long, WebSiteIdentifier> {
 
 	@Override
-	public NestedCollectionRoutes<DDMFormInstance, Long> collectionRoutes(
-		NestedCollectionRoutes.Builder<DDMFormInstance, Long> builder) {
+	public NestedCollectionRoutes<DDMDataProviderInstance, Long> collectionRoutes(
+		NestedCollectionRoutes.Builder<DDMDataProviderInstance, Long> builder) {
 
 		return builder.addGetter(
-			this::_getPageItems, Company.class
+			this::_getPageItems
 		).build();
 	}
 
 	@Override
 	public String getName() {
-		return "form-instance";
+		return "data-provider-instance";
 	}
 
 	@Override
-	public ItemRoutes<DDMFormInstance, Long> itemRoutes(
-		ItemRoutes.Builder<DDMFormInstance, Long> builder) {
+	public ItemRoutes<DDMDataProviderInstance, Long> itemRoutes(
+		ItemRoutes.Builder<DDMDataProviderInstance, Long> builder) {
 
 		return builder.addGetter(
 			this::_getFormInstance
@@ -71,8 +89,8 @@ public class FormInstanceCollectionResource
 	}
 
 	@Override
-	public Representor<DDMFormInstance, Long> representor(
-		Representor.Builder<DDMFormInstance, Long> builder) {
+	public Representor<DDMDataProviderInstance, Long> representor(
+		Representor.Builder<DDMDataProviderInstance, Long> builder) {
 
 		return builder.types(
 			"FormInstance"
@@ -120,24 +138,29 @@ public class FormInstanceCollectionResource
 	private DDMFormInstance _getFormInstance(Long formInstanceId) {
 		try {
 			return _ddmFormInstanceService.getFormInstance(formInstanceId);
-		}
-		catch (PortalException pe) {
+		} catch (PortalException pe) {
 			throw new ServerErrorException(500, pe);
 		}
 	}
 
 	private PageItems<DDMFormInstance> _getPageItems(
-		Pagination pagination, Long groupId, Company company) {
+		Pagination pagination, Long groupId) {
 
-		List<DDMFormInstance> ddmFormInstances =
-			_ddmFormInstanceService.getFormInstances(
-				company.getCompanyId(), groupId, pagination.getStartPosition(),
-				pagination.getEndPosition());
+		try {
+			Group group = _groupLocalService.getGroup(groupId);
 
-		int count = _ddmFormInstanceService.getFormInstancesCount(
-			company.getCompanyId(), groupId);
+			List<DDMFormInstance> ddmFormInstances =
+				_ddmFormInstanceService.getFormInstances(
+					group.getCompanyId(), groupId,
+					pagination.getStartPosition(), pagination.getEndPosition());
 
-		return new PageItems<>(ddmFormInstances, count);
+			int count = _ddmFormInstanceService.getFormInstancesCount(
+				group.getCompanyId(), groupId);
+
+			return new PageItems<>(ddmFormInstances, count);
+		} catch (PortalException pe) {
+			throw new ServerErrorException(500, pe);
+		}
 	}
 
 	@Reference
