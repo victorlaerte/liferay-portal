@@ -24,7 +24,7 @@ import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordService;
-import com.liferay.forms.apio.architect.identifier.FormInstanceId;
+import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceRecordIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
 import org.osgi.service.component.annotations.Component;
@@ -42,7 +42,7 @@ import java.util.List;
 @Component(immediate = true)
 public class FormInstanceRecordCollectionResource
 	implements NestedCollectionResource<DDMFormInstanceRecord, Long,
-		FormInstanceRecordIdentifier, Long, FormInstanceId> {
+		FormInstanceRecordIdentifier, Long, FormInstanceIdentifier> {
 
 	@Override
 	public NestedCollectionRoutes<DDMFormInstanceRecord, Long> collectionRoutes(
@@ -78,7 +78,7 @@ public class FormInstanceRecordCollectionResource
 		).addBidirectionalModel(
 			"form-instance",
 			"form-instance-record",
-			FormInstanceId.class,
+			FormInstanceIdentifier.class,
 			DDMFormInstanceRecord::getFormInstanceId
 		).addDate(
 			"createDate", DDMFormInstanceRecord::getCreateDate
