@@ -22,7 +22,7 @@ import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
-import com.liferay.forms.apio.architect.identifier.FormInstanceId;
+import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
@@ -44,7 +44,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true)
 public class FormInstanceCollectionResource
-	implements NestedCollectionResource<DDMFormInstance, Long, FormInstanceId,
+	implements NestedCollectionResource<DDMFormInstance, Long, FormInstanceIdentifier,
 		Long, WebSiteIdentifier> {
 
 	@Override

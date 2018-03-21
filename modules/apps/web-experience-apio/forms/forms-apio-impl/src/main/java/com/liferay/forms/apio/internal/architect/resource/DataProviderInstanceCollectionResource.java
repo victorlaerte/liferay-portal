@@ -22,7 +22,7 @@ import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
 import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceService;
-import com.liferay.forms.apio.architect.identifier.DataProviderInstanceId;
+import com.liferay.forms.apio.architect.identifier.DataProviderInstanceIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
@@ -42,7 +42,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true)
 public class DataProviderInstanceCollectionResource
-	implements NestedCollectionResource<DDMDataProviderInstance, Long, DataProviderInstanceId,
+	implements NestedCollectionResource<DDMDataProviderInstance, Long, DataProviderInstanceIdentifier,
 		Long, WebSiteIdentifier> {
 
 	@Override

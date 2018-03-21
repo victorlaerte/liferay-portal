@@ -34,7 +34,7 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.forms.apio.architect.identifier.FormInstanceId;
+import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceRecordIdentifier;
 import com.liferay.forms.apio.internal.architect.FormFieldValue;
 import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordForm;
@@ -61,7 +61,7 @@ import java.util.List;
 @Component(immediate = true)
 public class FormInstanceRecordCollectionResource
 	implements NestedCollectionResource<DDMFormInstanceRecord, Long,
-		FormInstanceRecordIdentifier, Long, FormInstanceId> {
+		FormInstanceRecordIdentifier, Long, FormInstanceIdentifier> {
 
 	@Override
 	public NestedCollectionRoutes<DDMFormInstanceRecord, Long> collectionRoutes(
@@ -103,7 +103,7 @@ public class FormInstanceRecordCollectionResource
 		).addBidirectionalModel(
 			"form-instance",
 			"form-instance-record",
-			FormInstanceId.class,
+			FormInstanceIdentifier.class,
 			DDMFormInstanceRecord::getFormInstanceId
 		).addDate(
 			"createDate", DDMFormInstanceRecord::getCreateDate

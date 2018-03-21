@@ -17,10 +17,10 @@ package com.liferay.forms.apio.architect.identifier;
 import com.liferay.apio.architect.identifier.Identifier;
 
 /**
- * Holds information about a {@code DataProviderInstance} identifier.
+ * Holds information about a {@code FormInstance} identifier.
  *
  * @author Victor Oliveira
  * @review
  */
-public interface DataProviderInstanceId extends Identifier<Long> {
+public interface FormInstanceIdentifier extends Identifier<Long> {
 }
