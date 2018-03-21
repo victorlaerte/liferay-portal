@@ -65,6 +65,15 @@ public class DDMFormInstanceRecordServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord> getFormInstanceRecords(
+		long ddmFormInstanceId, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord> orderByComparator)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _ddmFormInstanceRecordService.getFormInstanceRecords(ddmFormInstanceId,
+			status, start, end, orderByComparator);
+	}
+
+	@Override
 	public int getFormInstanceRecordsCount(long ddmFormInstanceId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _ddmFormInstanceRecordService.getFormInstanceRecordsCount(ddmFormInstanceId);

@@ -126,6 +126,24 @@ public class DDMFormInstanceRecordServiceSoap {
 		}
 	}
 
+	public static com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecordSoap[] getFormInstanceRecords(
+		long ddmFormInstanceId, int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord> orderByComparator)
+		throws RemoteException {
+		try {
+			java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord> returnValue =
+				DDMFormInstanceRecordServiceUtil.getFormInstanceRecords(ddmFormInstanceId,
+					status, start, end, orderByComparator);
+
+			return com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecordSoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static int getFormInstanceRecordsCount(long ddmFormInstanceId)
 		throws RemoteException {
 		try {
