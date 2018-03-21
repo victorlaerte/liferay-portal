@@ -16,21 +16,40 @@
 
 package com.liferay.forms.apio.internal.architect.resource;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.liferay.apio.architect.credentials.Credentials;
+import com.liferay.apio.architect.language.Language;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
 import com.liferay.apio.architect.representor.Representor;
 import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
+import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordService;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.forms.apio.architect.identifier.FormInstanceId;
 import com.liferay.forms.apio.architect.identifier.FormInstanceRecordIdentifier;
+import com.liferay.forms.apio.internal.architect.FormFieldValue;
+import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordForm;
+import com.liferay.portal.apio.architect.context.auth.MockPermissions;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.ServerErrorException;
+import javax.xml.ws.Service;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +69,9 @@ public class FormInstanceRecordCollectionResource
 
 		return builder.addGetter(
 			this::_getPageItems
+		).addCreator(
+			this::_addFormInstanceRecord, ServiceContext.class,
+			MockPermissions::validPermission, FormInstanceRecordForm::buildForm
 		).build();
 	}
 
@@ -64,6 +86,9 @@ public class FormInstanceRecordCollectionResource
 
 		return builder.addGetter(
 			this::_getFormInstanceRecord
+		).addUpdater(
+			this::_updateFormInstanceRecord, ServiceContext.class,
+			this::_validateUpdatePermission, FormInstanceRecordForm::buildForm
 		).build();
 	}
 
@@ -100,6 +125,8 @@ public class FormInstanceRecordCollectionResource
 			"versionUserName", DDMFormInstanceRecord::getVersionUserName
 		).addString(
 			"version", DDMFormInstanceRecord::getVersion
+		).addLocalizedString(
+			"fieldValues", this::_getFieldValues
 		).build();
 	}
 
@@ -107,13 +134,14 @@ public class FormInstanceRecordCollectionResource
 		Long formInstanceRecordId) {
 
 		try {
-			DDMFormInstanceRecord record = _ddmFormInstanceRecordService.getFormInstanceRecord(
-				formInstanceRecordId);
-			record.getDDMFormValues();
+			DDMFormInstanceRecord record =
+				_ddmFormInstanceRecordService.getFormInstanceRecord(
+					formInstanceRecordId);
 
 			return _ddmFormInstanceRecordService.getFormInstanceRecord(
 				formInstanceRecordId);
-		} catch (PortalException pe) {
+		}
+		catch (PortalException pe) {
 			throw new ServerErrorException(500, pe);
 		}
 	}
@@ -131,12 +159,131 @@ public class FormInstanceRecordCollectionResource
 					formInstanceId);
 
 			return new PageItems<>(ddmFormInstances, count);
-		} catch (PortalException pe) {
+		}
+		catch (PortalException pe) {
+			throw new ServerErrorException(500, pe);
+		}
+	}
+
+	private String _getFieldValues(DDMFormInstanceRecord ddmFormInstanceRecord,
+								   Language language) {
+		try {
+			Gson gson = new Gson();
+
+			List<DDMFormFieldValue> ddmFormFieldValues =
+				ddmFormInstanceRecord.getDDMFormValues().getDDMFormFieldValues();
+
+			List<FormFieldValue> formFieldValues = new ArrayList<>();
+
+			for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+				String instanceId = ddmFormFieldValue.getInstanceId();
+				String name = ddmFormFieldValue.getName();
+				String value = ddmFormFieldValue.getValue()
+					.getString(language.getPreferredLocale());
+
+				formFieldValues.add(new FormFieldValue(instanceId, name, value));
+			}
+
+			return gson.toJson(formFieldValues);
+		}
+		catch (PortalException pe) {
+			throw new ServerErrorException(500, pe);
+		}
+	}
+
+	private DDMFormInstanceRecord _addFormInstanceRecord(
+		Long formInstanceId, FormInstanceRecordForm formInstanceRecordForm,
+		ServiceContext serviceContext) {
+
+		try {
+			DDMFormInstance ddmFormInstance =
+				_ddmFormInstanceService.getFormInstance(formInstanceId);
+
+			DDMFormValues ddmFormValues =
+				_getDDMFormValues(formInstanceRecordForm,
+					ddmFormInstance.getStructure().getDDMForm());
+
+			return _ddmFormInstanceRecordService.addFormInstanceRecord(
+				ddmFormInstance.getGroupId(), ddmFormInstance.getFormInstanceId(),
+				ddmFormValues, serviceContext);
+		}
+		catch (PortalException pe) {
+			throw new ServerErrorException(500, pe);
+		}
+	}
+
+	private DDMFormInstanceRecord _updateFormInstanceRecord(
+		Long formInstanceId, FormInstanceRecordForm formInstanceRecordForm,
+		ServiceContext serviceContext) {
+
+		try {
+			DDMFormInstance ddmFormInstance =
+				_ddmFormInstanceService.getFormInstance(formInstanceId);
+
+			DDMFormValues ddmFormValues =
+				_getDDMFormValues(formInstanceRecordForm,
+					ddmFormInstance.getStructure().getDDMForm());
+
+			// TODO Major version check
+			return _ddmFormInstanceRecordService.updateFormInstanceRecord(
+				formInstanceRecordForm.getFormInstanceRecordId(), true,
+				ddmFormValues, null);
+		}
+		catch (PortalException pe) {
+			throw new ServerErrorException(500, pe);
+		}
+	}
+
+	private DDMFormValues _getDDMFormValues(
+		FormInstanceRecordForm formInstanceRecordForm, DDMForm ddmForm) {
+
+		Gson gson = new Gson();
+		Type listType = new TypeToken<ArrayList<FormFieldValue>>(){}.getType();
+
+		ArrayList<FormFieldValue> formFieldValues =
+			gson.fromJson(formInstanceRecordForm.getFieldValues(), listType);
+
+		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
+
+		for (FormFieldValue formFieldValue : formFieldValues) {
+			DDMFormFieldValue ddmFormFieldValue = new DDMFormFieldValue();
+			ddmFormFieldValue.setInstanceId(formFieldValue.getInstanceId());
+			ddmFormFieldValue.setName(formFieldValue.getName());
+			ddmFormFieldValue.setValue(
+				new UnlocalizedValue(formFieldValue.getValue()));
+
+			ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
+		}
+
+		return ddmFormValues;
+	}
+
+	private Boolean _validateUpdatePermission(
+		Credentials credentials, Long formInstanceRecordId) {
+
+		try {
+			User currentUser = _userService.getCurrentUser();
+
+			DDMFormInstanceRecord ddmFormInstanceRecord =
+				_ddmFormInstanceRecordService.getFormInstanceRecord(
+					formInstanceRecordId.longValue());
+
+			// TODO Review rules to this permission checker
+			return currentUser.getUserId() == ddmFormInstanceRecord.getUserId();
+		}
+		catch(PortalException pe) {
 			throw new ServerErrorException(500, pe);
 		}
 	}
 
 	@Reference
+	private DDMFormInstanceService _ddmFormInstanceService;
+
+	@Reference
 	private DDMFormInstanceRecordService _ddmFormInstanceRecordService;
+
+	@Reference
+	private UserService _userService;
+
 
 }
