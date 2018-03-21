@@ -67,6 +67,8 @@ public class FormInstanceCollectionResource
 
 		return builder.addGetter(
 			this::_getFormInstance
+		).addGetter(
+			this::_evaluateContext, String.class
 		).build();
 	}
 
@@ -118,6 +120,15 @@ public class FormInstanceCollectionResource
 	}
 
 	private DDMFormInstance _getFormInstance(Long formInstanceId) {
+		try {
+			return _ddmFormInstanceService.getFormInstance(formInstanceId);
+		}
+		catch (PortalException pe) {
+			throw new ServerErrorException(500, pe);
+		}
+	}
+
+	private DDMFormInstance _evaluateContext(Long formInstanceId, String context) {
 		try {
 			return _ddmFormInstanceService.getFormInstance(formInstanceId);
 		}
