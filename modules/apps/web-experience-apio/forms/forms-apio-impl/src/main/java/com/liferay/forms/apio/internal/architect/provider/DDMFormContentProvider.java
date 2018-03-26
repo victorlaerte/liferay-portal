@@ -15,8 +15,8 @@
 package com.liferay.forms.apio.internal.architect.provider;
 
 import com.liferay.apio.architect.provider.Provider;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormContextProviderHelper;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
-import com.liferay.dynamic.data.mapping.util.DDMFormContextProviderHelper;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
