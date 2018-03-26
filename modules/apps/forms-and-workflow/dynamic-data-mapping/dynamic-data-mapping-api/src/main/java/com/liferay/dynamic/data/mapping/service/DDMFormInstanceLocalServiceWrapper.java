@@ -391,6 +391,12 @@ public class DDMFormInstanceLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.liferay.dynamic.data.mapping.model.DDMFormInstance> getFormInstances(
+		long groupId, int start, int end) {
+		return _ddmFormInstanceLocalService.getFormInstances(groupId, start, end);
+	}
+
+	@Override
 	public int getFormInstancesCount(long groupId) {
 		return _ddmFormInstanceLocalService.getFormInstancesCount(groupId);
 	}
