@@ -65,16 +65,8 @@ public class StructureCollectionResource
 			"modifiedDate", DDMStructure::getCreateDate
 		).addDate(
 			"lastPublishDate", DDMStructure::getLastPublishDate
-		).addNumber(
-			"companyId", DDMStructure::getCompanyId
-		).addNumber(
-			"groupId", DDMStructure::getGroupId
-		).addNumber(
-			"userId", DDMStructure::getUserId
 		).addString(
 			"userName", DDMStructure::getUserName
-		).addNumber(
-			"versionUserId", DDMStructure::getVersionUserId
 		).addString(
 			"versionUserName", DDMStructure::getVersionUserName
 		).addString(

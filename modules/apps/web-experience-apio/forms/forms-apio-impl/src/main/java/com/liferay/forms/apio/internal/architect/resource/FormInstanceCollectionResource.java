@@ -20,13 +20,20 @@ import com.liferay.apio.architect.representor.Representor;
 import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormContextProviderHelper;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
+import com.liferay.forms.apio.internal.architect.FormContext;
+import com.liferay.forms.apio.internal.architect.form.FormContextForm;
+import com.liferay.portal.apio.architect.context.auth.MockPermissions;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
 
 import java.util.List;
@@ -67,8 +74,8 @@ public class FormInstanceCollectionResource
 
 		return builder.addGetter(
 			this::_getFormInstance
-		).addGetter(
-			this::_evaluateContext, String.class
+		).addUpdater(
+			this::_evaluateContext, MockPermissions::validPermission, FormContextForm::buildForm
 		).build();
 	}
 
@@ -97,14 +104,6 @@ public class FormInstanceCollectionResource
 			"name",
 			(ddmFormInstance, language) -> ddmFormInstance.getName(
 				language.getPreferredLocale())
-		).addNumber(
-			"companyId", DDMFormInstance::getCompanyId
-		).addNumber(
-			"groupId", DDMFormInstance::getGroupId
-		).addNumber(
-			"userId", DDMFormInstance::getUserId
-		).addNumber(
-			"versionUserId", DDMFormInstance::getVersionUserId
 		).addString(
 			"userName", DDMFormInstance::getUserName
 		).addString(
@@ -120,13 +119,26 @@ public class FormInstanceCollectionResource
 	}
 
 	private DDMFormInstance _evaluateContext(
-		Long formInstanceId, String context) {
+		Long formInstanceId, FormContextForm formContextForm) {
 
 		try {
+
+			System.out.println(formContextForm.getSerializedFormContext());
+
+			DDMFormRenderingContext ddmFormRenderingContext =
+				new DDMFormRenderingContext();
+
+			ddmFormRenderingContext.setLocale(LocaleUtil.fromLanguageId(formContextForm.getLanguageId()));
+			ddmFormRenderingContext.setPortletNamespace(formContextForm.getPortletNamespace());
+
+			List<Object> ddmFormPagesTemplateContext =
+				_ddmFormContextProviderHelper.createDDMFormPagesTemplateContext(
+					ddmFormRenderingContext, formContextForm.getPortletNamespace(), formContextForm.getPortletNamespace());
+
 			return _ddmFormInstanceService.getFormInstance(formInstanceId);
 		}
-		catch (PortalException pe) {
-			throw new ServerErrorException(500, pe);
+		catch (Exception pe) {
+			throw  new ServerErrorException(500, pe);
 		}
 	}
 
@@ -158,5 +170,8 @@ public class FormInstanceCollectionResource
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private DDMFormContextProviderHelper _ddmFormContextProviderHelper;
 
 }

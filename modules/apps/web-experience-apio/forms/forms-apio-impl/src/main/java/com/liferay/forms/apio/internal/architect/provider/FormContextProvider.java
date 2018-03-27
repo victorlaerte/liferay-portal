@@ -17,6 +17,7 @@ package com.liferay.forms.apio.internal.architect.provider;
 import com.liferay.apio.architect.provider.Provider;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormContextProviderHelper;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.forms.apio.internal.architect.FormContext;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -35,10 +36,10 @@ import org.osgi.service.component.annotations.Reference;
  * @author Victor Oliveira
  */
 @Component(immediate = true)
-public class DDMFormContentProvider implements Provider<List<Object>> {
+public class FormContextProvider implements Provider<FormContext> {
 
 	@Override
-	public List<Object> createContext(HttpServletRequest httpServletRequest) {
+	public FormContext createContext(HttpServletRequest httpServletRequest) {
 		try {
 			String languageId = LanguageUtil.getLanguageId(httpServletRequest);
 
@@ -54,9 +55,13 @@ public class DDMFormContentProvider implements Provider<List<Object>> {
 				createDDMFormRenderingContext(
 					httpServletRequest, locale, portletNamespace);
 
-			return
+			List<Object> ddmFormPagesTemplateContext =
 				_ddmFormContextProviderHelper.createDDMFormPagesTemplateContext(
 					ddmFormRenderingContext, serializedFormContext, languageId);
+
+			return new FormContext(
+				languageId, portletNamespace, ddmFormPagesTemplateContext);
+
 		}
 		catch (Exception e) {
 			throw new ServerErrorException(500, e);
