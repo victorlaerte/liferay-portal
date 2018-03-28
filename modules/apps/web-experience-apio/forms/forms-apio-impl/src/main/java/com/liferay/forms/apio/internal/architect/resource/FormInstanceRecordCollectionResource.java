@@ -14,7 +14,7 @@
 
 package com.liferay.forms.apio.internal.architect.resource;
 
-import com.liferay.apio.architect.credentials.Credentials;
+import com.liferay.apio.architect.language.Language;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
 import com.liferay.apio.architect.representor.Representor;
@@ -29,11 +29,11 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceRecordIdentifier;
-import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordForm;
+import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordCreatorForm;
+import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordUpdaterForm;
 import com.liferay.forms.apio.internal.architect.helper.FormInstanceRecordResourceHelper;
 import com.liferay.portal.apio.architect.context.auth.MockPermissions;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserService;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -63,8 +63,9 @@ public class FormInstanceRecordCollectionResource
 		return builder.addGetter(
 			this::_getPageItems
 		).addCreator(
-			this::_addFormInstanceRecord, ServiceContext.class,
-			MockPermissions::validPermission, FormInstanceRecordForm::buildForm
+			this::_addFormInstanceRecord, Language.class, ServiceContext.class,
+			MockPermissions::validPermission,
+			FormInstanceRecordCreatorForm::buildForm
 		).build();
 	}
 
@@ -80,8 +81,9 @@ public class FormInstanceRecordCollectionResource
 		return builder.addGetter(
 			this::_getFormInstanceRecord
 		).addUpdater(
-			this::_updateFormInstanceRecord, ServiceContext.class,
-			this::_validateUpdatePermission, FormInstanceRecordForm::buildForm
+			this::_updateFormInstanceRecord, Language.class,
+			ServiceContext.class, MockPermissions::validPermission,
+			FormInstanceRecordUpdaterForm::buildForm
 		).build();
 	}
 
@@ -123,8 +125,8 @@ public class FormInstanceRecordCollectionResource
 	}
 
 	private DDMFormInstanceRecord _addFormInstanceRecord(
-		Long formInstanceId, FormInstanceRecordForm formInstanceRecordForm,
-		ServiceContext serviceContext) {
+		Long formInstanceId, FormInstanceRecordCreatorForm formInstanceRecordForm,
+		Language language, ServiceContext serviceContext) {
 
 		try {
 			DDMFormInstance ddmFormInstance =
@@ -134,7 +136,8 @@ public class FormInstanceRecordCollectionResource
 
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
-					formInstanceRecordForm, ddmStructure.getDDMForm());
+					formInstanceRecordForm, ddmStructure.getDDMForm(),
+					language);
 
 			return _ddmFormInstanceRecordService.addFormInstanceRecord(
 				ddmFormInstance.getGroupId(),
@@ -180,43 +183,32 @@ public class FormInstanceRecordCollectionResource
 	}
 
 	private DDMFormInstanceRecord _updateFormInstanceRecord(
-		Long formInstanceId, FormInstanceRecordForm formInstanceRecordForm,
-		ServiceContext serviceContext) {
+		Long formInstanceRecordId,
+		FormInstanceRecordUpdaterForm formInstanceRecordUpdaterForm,
+		Language language, ServiceContext serviceContext) {
 
 		try {
+			DDMFormInstanceRecord ddmFormInstanceRecord =
+				_getFormInstanceRecord(formInstanceRecordId);
+
 			DDMFormInstance ddmFormInstance =
-				_ddmFormInstanceService.getFormInstance(formInstanceId);
+				ddmFormInstanceRecord.getFormInstance();
 
 			DDMStructure ddmStructure = ddmFormInstance.getStructure();
 
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
-					formInstanceRecordForm, ddmStructure.getDDMForm());
+					formInstanceRecordUpdaterForm, ddmStructure.getDDMForm(),
+					language);
 
-			// TODO Major version check
+			boolean majorVersion =
+				FormInstanceRecordResourceHelper._checkMajorVersion(
+					ddmFormInstance.getVersion(),
+					formInstanceRecordUpdaterForm.getFormInstanceVersion());
 
 			return _ddmFormInstanceRecordService.updateFormInstanceRecord(
-				formInstanceRecordForm.getFormInstanceRecordId(), true,
-				ddmFormValues, null);
-		}
-		catch (PortalException pe) {
-			throw new ServerErrorException(500, pe);
-		}
-	}
-
-	private Boolean _validateUpdatePermission(
-		Credentials credentials, Long formInstanceRecordId) {
-
-		try {
-			User currentUser = _userService.getCurrentUser();
-
-			DDMFormInstanceRecord ddmFormInstanceRecord =
-				_ddmFormInstanceRecordService.getFormInstanceRecord(
-					formInstanceRecordId.longValue());
-
-			// TODO Review rules to this permission checker
-
-			return currentUser.getUserId() == ddmFormInstanceRecord.getUserId();
+				formInstanceRecordUpdaterForm.getFormInstanceRecordId(),
+				majorVersion, ddmFormValues, serviceContext);
 		}
 		catch (PortalException pe) {
 			throw new ServerErrorException(500, pe);

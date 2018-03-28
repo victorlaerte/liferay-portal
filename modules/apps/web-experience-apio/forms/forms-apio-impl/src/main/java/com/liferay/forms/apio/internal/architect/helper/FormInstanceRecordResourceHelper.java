@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import com.liferay.apio.architect.language.Language;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
@@ -41,7 +42,8 @@ import javax.ws.rs.ServerErrorException;
 public class FormInstanceRecordResourceHelper {
 
 	public static DDMFormValues getDDMFormValues(
-		FormInstanceRecordForm formInstanceRecordForm, DDMForm ddmForm) {
+		FormInstanceRecordForm formInstanceRecordForm, DDMForm ddmForm,
+		Language language) {
 
 		Gson gson = new Gson();
 
@@ -57,8 +59,13 @@ public class FormInstanceRecordResourceHelper {
 
 			ddmFormFieldValue.setInstanceId(formFieldValue.getInstanceId());
 			ddmFormFieldValue.setName(formFieldValue.getName());
-			ddmFormFieldValue.setValue(
-				new UnlocalizedValue(formFieldValue.getValue()));
+
+			LocalizedValue localizedValue = new LocalizedValue();
+
+			localizedValue.addString(language.getPreferredLocale(),
+				formFieldValue.getValue());
+
+			ddmFormFieldValue.setValue(localizedValue);
 
 			ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
 		}
@@ -97,6 +104,15 @@ public class FormInstanceRecordResourceHelper {
 		catch (PortalException pe) {
 			throw new ServerErrorException(500, pe);
 		}
+	}
+
+	public static boolean _checkMajorVersion(
+		String currentVersionString, String submittedVersionString) {
+
+		double currentVersion = Double.parseDouble(currentVersionString);
+		double submittedVersion = Double.parseDouble(submittedVersionString);
+
+		return currentVersion == submittedVersion;
 	}
 
 	private static class FormFieldValueListToken
