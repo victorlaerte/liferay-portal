@@ -30,14 +30,19 @@ import com.liferay.forms.apio.internal.architect.FormContext;
 import com.liferay.forms.apio.internal.architect.form.FormContextForm;
 import com.liferay.portal.apio.architect.context.auth.MockPermissions;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.servlet.ServletResponseUtil;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.ServerErrorException;
 
 import org.osgi.service.component.annotations.Component;
@@ -133,7 +138,10 @@ public class FormInstanceCollectionResource
 
 			List<Object> ddmFormPagesTemplateContext =
 				_ddmFormContextProviderHelper.createDDMFormPagesTemplateContext(
-					ddmFormRenderingContext, formContextForm.getPortletNamespace(), formContextForm.getPortletNamespace());
+					ddmFormRenderingContext, formContextForm.getSerializedFormContext(), formContextForm.getPortletNamespace());
+
+			JSONSerializer jsonSerializer = _jsonFactory.createJSONSerializer();
+			jsonSerializer.serializeDeep(ddmFormPagesTemplateContext);
 
 			return _ddmFormInstanceService.getFormInstance(formInstanceId);
 		}
@@ -173,5 +181,8 @@ public class FormInstanceCollectionResource
 
 	@Reference
 	private DDMFormContextProviderHelper _ddmFormContextProviderHelper;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 }
