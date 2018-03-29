@@ -42,7 +42,8 @@ public class FormContext {
 		return _portletNamespace;
 	}
 
-	private List<Object> _formPagesTemplateContext;
-	private String _languageId;
-	private String _portletNamespace;
+	private final List<Object> _formPagesTemplateContext;
+	private final String _languageId;
+	private final String _portletNamespace;
+
 }

@@ -125,8 +125,9 @@ public class FormInstanceRecordCollectionResource
 	}
 
 	private DDMFormInstanceRecord _addFormInstanceRecord(
-		Long formInstanceId, FormInstanceRecordCreatorForm formInstanceRecordForm,
-		Language language, ServiceContext serviceContext) {
+		Long formInstanceId,
+		FormInstanceRecordCreatorForm formInstanceRecordForm, Language language,
+		ServiceContext serviceContext) {
 
 		try {
 			DDMFormInstance ddmFormInstance =
@@ -136,8 +137,8 @@ public class FormInstanceRecordCollectionResource
 
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
-					formInstanceRecordForm, ddmStructure.getDDMForm(),
-					language);
+					formInstanceRecordForm.getFieldValues(),
+					ddmStructure.getDDMForm(), language);
 
 			return _ddmFormInstanceRecordService.addFormInstanceRecord(
 				ddmFormInstance.getGroupId(),
@@ -198,8 +199,8 @@ public class FormInstanceRecordCollectionResource
 
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
-					formInstanceRecordUpdaterForm, ddmStructure.getDDMForm(),
-					language);
+					formInstanceRecordUpdaterForm.getFieldValues(),
+					ddmStructure.getDDMForm(), language);
 
 			boolean majorVersion =
 				FormInstanceRecordResourceHelper._checkMajorVersion(

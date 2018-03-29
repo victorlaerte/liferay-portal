@@ -21,12 +21,10 @@ import com.liferay.apio.architect.language.Language;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
-import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.forms.apio.internal.architect.FormFieldValue;
-import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordForm;
 import com.liferay.portal.kernel.exception.PortalException;
 
 import java.lang.reflect.Type;
@@ -41,16 +39,28 @@ import javax.ws.rs.ServerErrorException;
  */
 public class FormInstanceRecordResourceHelper {
 
+	public static boolean _checkMajorVersion(
+		String currentVersionString, String submittedVersionString) {
+
+		double currentVersion = Double.parseDouble(currentVersionString);
+		double submittedVersion = Double.parseDouble(submittedVersionString);
+
+		if (currentVersion == submittedVersion) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public static DDMFormValues getDDMFormValues(
-		FormInstanceRecordForm formInstanceRecordForm, DDMForm ddmForm,
-		Language language) {
+		String fieldValues, DDMForm ddmForm, Language language) {
 
 		Gson gson = new Gson();
 
 		Type listType = new FormFieldValueListToken().getType();
 
-		ArrayList<FormFieldValue> formFieldValues = gson.fromJson(
-			formInstanceRecordForm.getFieldValues(), listType);
+		List<FormFieldValue> formFieldValues = gson.fromJson(
+			fieldValues, listType);
 
 		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
 
@@ -104,15 +114,6 @@ public class FormInstanceRecordResourceHelper {
 		catch (PortalException pe) {
 			throw new ServerErrorException(500, pe);
 		}
-	}
-
-	public static boolean _checkMajorVersion(
-		String currentVersionString, String submittedVersionString) {
-
-		double currentVersion = Double.parseDouble(currentVersionString);
-		double submittedVersion = Double.parseDouble(submittedVersionString);
-
-		return currentVersion == submittedVersion;
 	}
 
 	private static class FormFieldValueListToken

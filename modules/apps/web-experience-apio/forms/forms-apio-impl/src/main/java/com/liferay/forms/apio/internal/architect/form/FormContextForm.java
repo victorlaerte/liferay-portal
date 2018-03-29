@@ -47,8 +47,12 @@ public class FormContextForm {
 		).addRequiredString(
 			"portletNamespace", FormContextForm::_setPortletNamespace
 		).addRequiredString(
-			"serializedFormContext", FormContextForm::_setSerializedFormContext
+			"fieldValues", FormContextForm::_setFieldValues
 		).build();
+	}
+
+	public String getFieldValues() {
+		return _fieldValues;
 	}
 
 	public String getLanguageId() {
@@ -59,8 +63,8 @@ public class FormContextForm {
 		return _portletNamespace;
 	}
 
-	public String getSerializedFormContext() {
-		return _serializedFormContext;
+	private void _setFieldValues(String fieldValues) {
+		_fieldValues = fieldValues;
 	}
 
 	private void _setLanguageId(String languageId) {
@@ -71,11 +75,8 @@ public class FormContextForm {
 		_portletNamespace = portletNamespace;
 	}
 
-	private void _setSerializedFormContext(String serializedFormContext) {
-		_serializedFormContext = serializedFormContext;
-	}
-
+	private String _fieldValues;
 	private String _languageId;
 	private String _portletNamespace;
-	private String _serializedFormContext;
+
 }

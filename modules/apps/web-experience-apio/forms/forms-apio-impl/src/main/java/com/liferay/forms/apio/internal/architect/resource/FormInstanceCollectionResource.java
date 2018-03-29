@@ -14,35 +14,37 @@
 
 package com.liferay.forms.apio.internal.architect.resource;
 
+import com.liferay.apio.architect.language.Language;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
 import com.liferay.apio.architect.representor.Representor;
 import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
-import com.liferay.dynamic.data.mapping.form.renderer.DDMFormContextProviderHelper;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
+import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
-import com.liferay.forms.apio.internal.architect.FormContext;
 import com.liferay.forms.apio.internal.architect.form.FormContextForm;
+import com.liferay.forms.apio.internal.architect.helper.FormInstanceRecordResourceHelper;
 import com.liferay.portal.apio.architect.context.auth.MockPermissions;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.servlet.ServletResponseUtil;
-import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
 
 import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.ServerErrorException;
 
 import org.osgi.service.component.annotations.Component;
@@ -80,7 +82,8 @@ public class FormInstanceCollectionResource
 		return builder.addGetter(
 			this::_getFormInstance
 		).addUpdater(
-			this::_evaluateContext, MockPermissions::validPermission, FormContextForm::buildForm
+			this::_evaluateContext, Language.class,
+			MockPermissions::validPermission, FormContextForm::buildForm
 		).build();
 	}
 
@@ -123,30 +126,57 @@ public class FormInstanceCollectionResource
 		).build();
 	}
 
+	private DDMFormRenderingContext _createDDMFormRenderingContext(
+		FormContextForm formContextForm) {
+
+		DDMFormRenderingContext ddmFormRenderingContext =
+			new DDMFormRenderingContext();
+
+		ddmFormRenderingContext.setLocale(
+			LocaleUtil.fromLanguageId(formContextForm.getLanguageId()));
+
+		ddmFormRenderingContext.setPortletNamespace(
+			formContextForm.getPortletNamespace());
+
+		return ddmFormRenderingContext;
+	}
+
 	private DDMFormInstance _evaluateContext(
-		Long formInstanceId, FormContextForm formContextForm) {
+		Long formInstanceId, FormContextForm formContextForm,
+		Language language) {
 
 		try {
+			DDMFormInstance formInstance =
+				_ddmFormInstanceService.getFormInstance(formInstanceId);
 
-			System.out.println(formContextForm.getSerializedFormContext());
+			DDMStructure structure = formInstance.getStructure();
+
+			DDMForm ddmForm = structure.getDDMForm();
+			DDMFormLayout ddmFormLayout = structure.getDDMFormLayout();
 
 			DDMFormRenderingContext ddmFormRenderingContext =
-				new DDMFormRenderingContext();
+				_createDDMFormRenderingContext(formContextForm);
 
-			ddmFormRenderingContext.setLocale(LocaleUtil.fromLanguageId(formContextForm.getLanguageId()));
-			ddmFormRenderingContext.setPortletNamespace(formContextForm.getPortletNamespace());
+			DDMFormValues ddmFormValues =
+				FormInstanceRecordResourceHelper.getDDMFormValues(
+					formContextForm.getFieldValues(), ddmForm, language);
 
-			List<Object> ddmFormPagesTemplateContext =
-				_ddmFormContextProviderHelper.createDDMFormPagesTemplateContext(
-					ddmFormRenderingContext, formContextForm.getSerializedFormContext(), formContextForm.getPortletNamespace());
+			ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
+
+			Map<String, Object> templateContext =
+				_ddmFormTemplateContextFactory.create(
+					ddmForm, ddmFormLayout, ddmFormRenderingContext);
 
 			JSONSerializer jsonSerializer = _jsonFactory.createJSONSerializer();
-			jsonSerializer.serializeDeep(ddmFormPagesTemplateContext);
 
-			return _ddmFormInstanceService.getFormInstance(formInstanceId);
+			String json = jsonSerializer.serializeDeep(templateContext);
+
+			System.out.println(json);
+
+			return formInstance;
 		}
 		catch (Exception pe) {
-			throw  new ServerErrorException(500, pe);
+			throw new ServerErrorException(500, pe);
 		}
 	}
 
@@ -177,10 +207,10 @@ public class FormInstanceCollectionResource
 	private DDMFormInstanceService _ddmFormInstanceService;
 
 	@Reference
-	private GroupLocalService _groupLocalService;
+	private DDMFormTemplateContextFactory _ddmFormTemplateContextFactory;
 
 	@Reference
-	private DDMFormContextProviderHelper _ddmFormContextProviderHelper;
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private JSONFactory _jsonFactory;
