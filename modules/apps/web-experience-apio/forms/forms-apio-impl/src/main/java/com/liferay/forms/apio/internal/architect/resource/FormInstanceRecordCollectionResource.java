@@ -29,13 +29,13 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceRecordIdentifier;
+import com.liferay.forms.apio.internal.architect.FormInstanceRecordServiceContext;
 import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordCreatorForm;
 import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordUpdaterForm;
 import com.liferay.forms.apio.internal.architect.helper.FormInstanceRecordResourceHelper;
 import com.liferay.portal.apio.architect.context.auth.MockPermissions;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.UserService;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.List;
@@ -63,7 +63,8 @@ public class FormInstanceRecordCollectionResource
 		return builder.addGetter(
 			this::_getPageItems
 		).addCreator(
-			this::_addFormInstanceRecord, Language.class, ServiceContext.class,
+			this::_addFormInstanceRecord, Language.class,
+			FormInstanceRecordServiceContext.class,
 			MockPermissions::validPermission,
 			FormInstanceRecordCreatorForm::buildForm
 		).build();
@@ -82,7 +83,8 @@ public class FormInstanceRecordCollectionResource
 			this::_getFormInstanceRecord
 		).addUpdater(
 			this::_updateFormInstanceRecord, Language.class,
-			ServiceContext.class, MockPermissions::validPermission,
+			FormInstanceRecordServiceContext.class,
+			MockPermissions::validPermission,
 			FormInstanceRecordUpdaterForm::buildForm
 		).build();
 	}
@@ -126,8 +128,9 @@ public class FormInstanceRecordCollectionResource
 
 	private DDMFormInstanceRecord _addFormInstanceRecord(
 		Long formInstanceId,
-		FormInstanceRecordCreatorForm formInstanceRecordForm, Language language,
-		ServiceContext serviceContext) {
+		FormInstanceRecordCreatorForm formInstanceRecordCreatorForm,
+		Language language,
+		FormInstanceRecordServiceContext formInstanceRecordServiceContext) {
 
 		try {
 			DDMFormInstance ddmFormInstance =
@@ -137,13 +140,20 @@ public class FormInstanceRecordCollectionResource
 
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
-					formInstanceRecordForm.getFieldValues(),
+					formInstanceRecordCreatorForm.getFieldValues(),
 					ddmStructure.getDDMForm(), language);
+
+			ServiceContext serviceContext =
+				formInstanceRecordServiceContext.getServiceContext();
+
+			if(formInstanceRecordCreatorForm.isDraft()) {
+				_setServiceContextAsDraft(serviceContext);
+			}
 
 			return _ddmFormInstanceRecordService.addFormInstanceRecord(
 				ddmFormInstance.getGroupId(),
 				ddmFormInstance.getFormInstanceId(), ddmFormValues,
-				serviceContext);
+				formInstanceRecordServiceContext.getServiceContext());
 		}
 		catch (PortalException pe) {
 			throw new ServerErrorException(500, pe);
@@ -183,10 +193,17 @@ public class FormInstanceRecordCollectionResource
 		}
 	}
 
+	private void _setServiceContextAsDraft(ServiceContext serviceContext) {
+		serviceContext.setAttribute("status", WorkflowConstants.STATUS_DRAFT);
+		serviceContext.setAttribute("validateDDMFormValues", Boolean.FALSE);
+		serviceContext.setWorkflowAction(WorkflowConstants.ACTION_SAVE_DRAFT);
+	}
+
 	private DDMFormInstanceRecord _updateFormInstanceRecord(
 		Long formInstanceRecordId,
 		FormInstanceRecordUpdaterForm formInstanceRecordUpdaterForm,
-		Language language, ServiceContext serviceContext) {
+		Language language,
+		FormInstanceRecordServiceContext formInstanceRecordServiceContext) {
 
 		try {
 			DDMFormInstanceRecord ddmFormInstanceRecord =
@@ -202,14 +219,15 @@ public class FormInstanceRecordCollectionResource
 					formInstanceRecordUpdaterForm.getFieldValues(),
 					ddmStructure.getDDMForm(), language);
 
-			boolean majorVersion =
-				FormInstanceRecordResourceHelper._checkMajorVersion(
-					ddmFormInstance.getVersion(),
-					formInstanceRecordUpdaterForm.getFormInstanceVersion());
+			ServiceContext serviceContext =
+				formInstanceRecordServiceContext.getServiceContext();
+
+			if(formInstanceRecordUpdaterForm.isDraft()) {
+				_setServiceContextAsDraft(serviceContext);
+			}
 
 			return _ddmFormInstanceRecordService.updateFormInstanceRecord(
-				formInstanceRecordUpdaterForm.getFormInstanceRecordId(),
-				majorVersion, ddmFormValues, serviceContext);
+				formInstanceRecordId, false, ddmFormValues, serviceContext);
 		}
 		catch (PortalException pe) {
 			throw new ServerErrorException(500, pe);
@@ -221,8 +239,5 @@ public class FormInstanceRecordCollectionResource
 
 	@Reference
 	private DDMFormInstanceService _ddmFormInstanceService;
-
-	@Reference
-	private UserService _userService;
 
 }

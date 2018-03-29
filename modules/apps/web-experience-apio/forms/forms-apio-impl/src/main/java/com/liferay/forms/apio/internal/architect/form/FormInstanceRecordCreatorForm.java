@@ -44,8 +44,8 @@ public class FormInstanceRecordCreatorForm implements FormInstanceRecordForm {
 			FormInstanceRecordCreatorForm::new
 		).addRequiredString(
 			"fieldValues", FormInstanceRecordCreatorForm::_setFieldValues
-		).addRequiredString(
-			"formInstanceVersion", FormInstanceRecordCreatorForm::_setFormInstanceVersion
+		).addRequiredBoolean(
+			"isDraft", FormInstanceRecordCreatorForm::_setDraft
 		).build();
 	}
 
@@ -53,19 +53,19 @@ public class FormInstanceRecordCreatorForm implements FormInstanceRecordForm {
 		return _fieldValues;
 	}
 
-	public String getFormInstanceVersion() {
-		return _formInstanceVersion;
+	public boolean isDraft() {
+		return _draft;
+	}
+
+	private void _setDraft(boolean draft) {
+		_draft = draft;
 	}
 
 	private void _setFieldValues(String formValues) {
 		_fieldValues = formValues;
 	}
 
-	private void _setFormInstanceVersion(String formInstanceVersion) {
-		_formInstanceVersion = formInstanceVersion;
-	}
-
+	private boolean _draft;
 	private String _fieldValues;
-	private String _formInstanceVersion;
 
 }

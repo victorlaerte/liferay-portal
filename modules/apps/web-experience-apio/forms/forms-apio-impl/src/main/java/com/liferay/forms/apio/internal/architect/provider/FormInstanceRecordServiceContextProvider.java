@@ -12,9 +12,11 @@
  * details.
  */
 
-package com.liferay.portal.apio.internal.architect.provider;
+package com.liferay.forms.apio.internal.architect.provider;
 
 import com.liferay.apio.architect.provider.Provider;
+import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
+import com.liferay.forms.apio.internal.architect.FormInstanceRecordServiceContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
@@ -33,16 +35,22 @@ import org.osgi.service.component.annotations.Component;
  * @author Paulo Cruz
  */
 @Component(immediate = true)
-public class ServiceContextProvider implements Provider<ServiceContext> {
+public class FormInstanceRecordServiceContextProvider
+	implements Provider<FormInstanceRecordServiceContext> {
 
 	@Override
-	public ServiceContext createContext(HttpServletRequest httpServletRequest) {
+	public FormInstanceRecordServiceContext createContext(
+		HttpServletRequest httpServletRequest) {
+
 		try {
-			return ServiceContextFactory.getInstance(httpServletRequest);
+			ServiceContext serviceContext =
+				ServiceContextFactory.getInstance(
+					DDMFormInstanceRecord.class.getName(), httpServletRequest);
+
+			return new FormInstanceRecordServiceContext(serviceContext);
 		}
 		catch (PortalException pe) {
 			throw new ServerErrorException(500, pe);
 		}
 	}
-
 }

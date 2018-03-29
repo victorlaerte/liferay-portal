@@ -12,11 +12,27 @@
  * details.
  */
 
-package com.liferay.forms.apio.internal.architect.form;
+package com.liferay.forms.apio.internal.architect;
+
+	import com.liferay.portal.kernel.service.ServiceContext;
 
 /**
  * @author Paulo Cruz
  */
-public interface FormInstanceRecordForm {
-	String getFieldValues();
+public class FormInstanceRecordServiceContext {
+
+	public FormInstanceRecordServiceContext(ServiceContext serviceContext) {
+		_serviceContext = serviceContext;
+	}
+
+	public ServiceContext getServiceContext() {
+		return _serviceContext;
+	}
+
+	public void setServiceContext(
+		ServiceContext serviceContext) {
+		_serviceContext = serviceContext;
+	}
+
+	private ServiceContext _serviceContext;
 }

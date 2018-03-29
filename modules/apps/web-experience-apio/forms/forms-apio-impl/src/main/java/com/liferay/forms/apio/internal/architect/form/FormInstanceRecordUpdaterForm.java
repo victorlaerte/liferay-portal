@@ -44,14 +44,8 @@ public class FormInstanceRecordUpdaterForm implements FormInstanceRecordForm {
 			FormInstanceRecordUpdaterForm::new
 		).addRequiredString(
 			"fieldValues", FormInstanceRecordUpdaterForm::_setFieldValues
-		).addRequiredLong(
-			"formInstanceRecordId",
-			FormInstanceRecordUpdaterForm::_setFormInstanceRecordId
-		).addRequiredString(
-			"formInstanceRecordVersion",
-			FormInstanceRecordUpdaterForm::_setFormInstanceRecordVersion
-		).addRequiredString(
-			"formInstanceVersion", FormInstanceRecordUpdaterForm::_setFormInstanceVersion
+		).addRequiredBoolean(
+			"isDraft", FormInstanceRecordUpdaterForm::_setDraft
 		).build();
 	}
 
@@ -59,37 +53,19 @@ public class FormInstanceRecordUpdaterForm implements FormInstanceRecordForm {
 		return _fieldValues;
 	}
 
-	public long getFormInstanceRecordId() {
-		return _formInstanceRecordId;
+	public boolean isDraft() {
+		return _draft;
 	}
 
-	public String getFormInstanceRecordVersion() {
-		return _formInstanceRecordVersion;
-	}
-
-	public String getFormInstanceVersion() {
-		return _formInstanceVersion;
+	private void _setDraft(boolean draft) {
+		_draft = draft;
 	}
 
 	private void _setFieldValues(String formValues) {
 		_fieldValues = formValues;
 	}
 
-	private void _setFormInstanceRecordId(long formInstanceRecordId) {
-		_formInstanceRecordId = formInstanceRecordId;
-	}
-
-	private void _setFormInstanceRecordVersion(String formInstanceRecordVersion) {
-		_formInstanceRecordVersion = formInstanceRecordVersion;
-	}
-
-	private void _setFormInstanceVersion(String formInstanceVersion) {
-		_formInstanceVersion = formInstanceVersion;
-	}
-
+	private boolean _draft;
 	private String _fieldValues;
-	private long _formInstanceRecordId;
-	private String _formInstanceRecordVersion;
-	private String _formInstanceVersion;
 
 }
