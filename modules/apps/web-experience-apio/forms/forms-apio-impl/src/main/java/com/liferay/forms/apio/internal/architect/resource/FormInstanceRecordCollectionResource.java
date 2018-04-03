@@ -30,8 +30,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceRecordIdentifier;
 import com.liferay.forms.apio.internal.architect.FormInstanceRecordServiceContext;
-import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordCreatorForm;
-import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordUpdaterForm;
+import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordForm;
 import com.liferay.forms.apio.internal.architect.helper.FormInstanceRecordResourceHelper;
 import com.liferay.portal.apio.architect.context.auth.MockPermissions;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -66,7 +65,7 @@ public class FormInstanceRecordCollectionResource
 			this::_addFormInstanceRecord, Language.class,
 			FormInstanceRecordServiceContext.class,
 			MockPermissions::validPermission,
-			FormInstanceRecordCreatorForm::buildForm
+			FormInstanceRecordForm::buildForm
 		).build();
 	}
 
@@ -85,7 +84,7 @@ public class FormInstanceRecordCollectionResource
 			this::_updateFormInstanceRecord, Language.class,
 			FormInstanceRecordServiceContext.class,
 			MockPermissions::validPermission,
-			FormInstanceRecordUpdaterForm::buildForm
+			FormInstanceRecordForm::buildForm
 		).build();
 	}
 
@@ -128,7 +127,7 @@ public class FormInstanceRecordCollectionResource
 
 	private DDMFormInstanceRecord _addFormInstanceRecord(
 		Long formInstanceId,
-		FormInstanceRecordCreatorForm formInstanceRecordCreatorForm,
+		FormInstanceRecordForm formInstanceRecordForm,
 		Language language,
 		FormInstanceRecordServiceContext formInstanceRecordServiceContext) {
 
@@ -140,13 +139,13 @@ public class FormInstanceRecordCollectionResource
 
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
-					formInstanceRecordCreatorForm.getFieldValues(),
+					formInstanceRecordForm.getFieldValues(),
 					ddmStructure.getDDMForm(), language);
 
 			ServiceContext serviceContext =
 				formInstanceRecordServiceContext.getServiceContext();
 
-			if(formInstanceRecordCreatorForm.isDraft()) {
+			if(formInstanceRecordForm.isDraft()) {
 				_setServiceContextAsDraft(serviceContext);
 			}
 
@@ -201,7 +200,7 @@ public class FormInstanceRecordCollectionResource
 
 	private DDMFormInstanceRecord _updateFormInstanceRecord(
 		Long formInstanceRecordId,
-		FormInstanceRecordUpdaterForm formInstanceRecordUpdaterForm,
+		FormInstanceRecordForm formInstanceRecordForm,
 		Language language,
 		FormInstanceRecordServiceContext formInstanceRecordServiceContext) {
 
@@ -216,13 +215,13 @@ public class FormInstanceRecordCollectionResource
 
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
-					formInstanceRecordUpdaterForm.getFieldValues(),
+					formInstanceRecordForm.getFieldValues(),
 					ddmStructure.getDDMForm(), language);
 
 			ServiceContext serviceContext =
 				formInstanceRecordServiceContext.getServiceContext();
 
-			if(formInstanceRecordUpdaterForm.isDraft()) {
+			if(formInstanceRecordForm.isDraft()) {
 				_setServiceContextAsDraft(serviceContext);
 			}
 

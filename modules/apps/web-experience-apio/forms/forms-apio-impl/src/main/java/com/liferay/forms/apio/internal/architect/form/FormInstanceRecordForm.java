@@ -14,9 +14,58 @@
 
 package com.liferay.forms.apio.internal.architect.form;
 
+import com.liferay.apio.architect.form.Form;
+
 /**
  * @author Paulo Cruz
  */
-public interface FormInstanceRecordForm {
-	String getFieldValues();
+public class FormInstanceRecordForm {
+
+	/**
+	 * Builds a {@code Form} that generates
+	 * {@code FormInstanceRecordForm} depending on the HTTP body.
+	 *
+	 * @param  formBuilder the {@code Form} builder
+	 * @return a form instance record form
+	 */
+	public static Form<FormInstanceRecordForm> buildForm(
+		Form.Builder<FormInstanceRecordForm> formBuilder) {
+
+		String title = "The form instance record form";
+
+		String description =
+			"This form can be used to update a form instance record";
+
+		return formBuilder.title(
+			__ -> title
+		).description(
+			__ -> description
+		).constructor(
+			FormInstanceRecordForm::new
+		).addRequiredString(
+			"fieldValues", FormInstanceRecordForm::_setFieldValues
+		).addRequiredBoolean(
+			"isDraft", FormInstanceRecordForm::_setDraft
+		).build();
+	}
+
+	public String getFieldValues() {
+		return _fieldValues;
+	}
+
+	public boolean isDraft() {
+		return _draft;
+	}
+
+	private void _setDraft(boolean draft) {
+		_draft = draft;
+	}
+
+	private void _setFieldValues(String formValues) {
+		_fieldValues = formValues;
+	}
+
+	private boolean _draft;
+	private String _fieldValues;
+
 }
