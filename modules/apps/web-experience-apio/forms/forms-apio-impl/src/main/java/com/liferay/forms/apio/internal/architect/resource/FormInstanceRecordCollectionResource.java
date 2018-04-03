@@ -145,9 +145,8 @@ public class FormInstanceRecordCollectionResource
 			ServiceContext serviceContext =
 				formInstanceRecordServiceContext.getServiceContext();
 
-			if(formInstanceRecordForm.isDraft()) {
-				_setServiceContextAsDraft(serviceContext);
-			}
+			_setServiceContextAttributes(
+				serviceContext, formInstanceRecordForm.isDraft());
 
 			return _ddmFormInstanceRecordService.addFormInstanceRecord(
 				ddmFormInstance.getGroupId(),
@@ -192,10 +191,17 @@ public class FormInstanceRecordCollectionResource
 		}
 	}
 
-	private void _setServiceContextAsDraft(ServiceContext serviceContext) {
-		serviceContext.setAttribute("status", WorkflowConstants.STATUS_DRAFT);
-		serviceContext.setAttribute("validateDDMFormValues", Boolean.FALSE);
-		serviceContext.setWorkflowAction(WorkflowConstants.ACTION_SAVE_DRAFT);
+	private void _setServiceContextAttributes(
+		ServiceContext serviceContext, boolean isDraft) {
+
+		if(isDraft) {
+			serviceContext.setAttribute("status", WorkflowConstants.STATUS_DRAFT);
+			serviceContext.setAttribute("validateDDMFormValues", Boolean.FALSE);
+			serviceContext.setWorkflowAction(WorkflowConstants.ACTION_SAVE_DRAFT);
+		}
+		else {
+			serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
+		}
 	}
 
 	private DDMFormInstanceRecord _updateFormInstanceRecord(
@@ -221,9 +227,8 @@ public class FormInstanceRecordCollectionResource
 			ServiceContext serviceContext =
 				formInstanceRecordServiceContext.getServiceContext();
 
-			if(formInstanceRecordForm.isDraft()) {
-				_setServiceContextAsDraft(serviceContext);
-			}
+			_setServiceContextAttributes(
+				serviceContext, formInstanceRecordForm.isDraft());
 
 			return _ddmFormInstanceRecordService.updateFormInstanceRecord(
 				formInstanceRecordId, false, ddmFormValues, serviceContext);
