@@ -140,7 +140,7 @@ public class FormInstanceRecordCollectionResource
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
 					formInstanceRecordForm.getFieldValues(),
-					ddmStructure.getDDMForm(), language);
+					ddmStructure.getDDMForm(), language.getPreferredLocale());
 
 			ServiceContext serviceContext =
 				formInstanceRecordServiceContext.getServiceContext();
@@ -223,7 +223,7 @@ public class FormInstanceRecordCollectionResource
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
 					formInstanceRecordForm.getFieldValues(),
-					ddmStructure.getDDMForm(), language);
+					ddmStructure.getDDMForm(), language.getPreferredLocale());
 
 			ServiceContext serviceContext =
 				formInstanceRecordServiceContext.getServiceContext();

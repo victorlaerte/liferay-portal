@@ -39,10 +39,12 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.ws.rs.InternalServerErrorException;
@@ -82,8 +84,8 @@ public class FormInstanceCollectionResource
 		return builder.addGetter(
 			this::_getFormInstance
 		).addUpdater(
-			this::_evaluateContext, Language.class,
-			MockPermissions::validPermission, FormContextForm::buildForm
+			this::_evaluateContext, MockPermissions::validPermission,
+			FormContextForm::buildForm
 		).build();
 	}
 
@@ -142,10 +144,14 @@ public class FormInstanceCollectionResource
 	}
 
 	private DDMFormInstance _evaluateContext(
-		Long formInstanceId, FormContextForm formContextForm,
-		Language language) {
+		Long formInstanceId, FormContextForm formContextForm) {
 
 		try {
+			Locale locale =
+				LocaleUtil.fromLanguageId(formContextForm.getLanguageId());
+
+			LocaleThreadLocal.setThemeDisplayLocale(locale);
+
 			DDMFormInstance formInstance =
 				_ddmFormInstanceService.getFormInstance(formInstanceId);
 
@@ -159,7 +165,7 @@ public class FormInstanceCollectionResource
 
 			DDMFormValues ddmFormValues =
 				FormInstanceRecordResourceHelper.getDDMFormValues(
-					formContextForm.getFieldValues(), ddmForm, language);
+					formContextForm.getFieldValues(), ddmForm, locale);
 
 			ddmFormRenderingContext.setDDMFormValues(ddmFormValues);
 

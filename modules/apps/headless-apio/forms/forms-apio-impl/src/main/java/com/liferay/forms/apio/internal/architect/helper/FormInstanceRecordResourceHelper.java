@@ -31,6 +31,7 @@ import java.lang.reflect.Type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ws.rs.ServerErrorException;
 
@@ -40,7 +41,7 @@ import javax.ws.rs.ServerErrorException;
 public class FormInstanceRecordResourceHelper {
 
 	public static DDMFormValues getDDMFormValues(
-		String fieldValues, DDMForm ddmForm, Language language) {
+		String fieldValues, DDMForm ddmForm, Locale locale) {
 
 		Gson gson = new Gson();
 
@@ -59,11 +60,8 @@ public class FormInstanceRecordResourceHelper {
 
 			LocalizedValue localizedValue = new LocalizedValue();
 
-			localizedValue.addString(
-				language.getPreferredLocale(), formFieldValue.getValue());
-
+			localizedValue.addString(locale, formFieldValue.getValue());
 			ddmFormFieldValue.setValue(localizedValue);
-
 			ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
 		}
 
