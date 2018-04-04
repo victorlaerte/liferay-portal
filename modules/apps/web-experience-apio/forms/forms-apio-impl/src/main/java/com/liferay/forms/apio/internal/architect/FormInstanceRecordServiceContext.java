@@ -14,7 +14,7 @@
 
 package com.liferay.forms.apio.internal.architect;
 
-	import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContext;
 
 /**
  * @author Paulo Cruz
@@ -29,8 +29,7 @@ public class FormInstanceRecordServiceContext {
 		return _serviceContext;
 	}
 
-	public void setServiceContext(
-		ServiceContext serviceContext) {
+	public void setServiceContext(ServiceContext serviceContext) {
 		_serviceContext = serviceContext;
 	}
 

@@ -27,6 +27,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceRecordIdentifier;
 import com.liferay.forms.apio.internal.architect.FormInstanceRecordServiceContext;
@@ -39,6 +40,8 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.List;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.ServerErrorException;
 
 import org.osgi.service.component.annotations.Component;
@@ -233,8 +236,11 @@ public class FormInstanceRecordCollectionResource
 			return _ddmFormInstanceRecordService.updateFormInstanceRecord(
 				formInstanceRecordId, false, ddmFormValues, serviceContext);
 		}
+		catch (DDMFormValuesValidationException de) {
+			throw new BadRequestException(de.getMessage(), de);
+		}
 		catch (PortalException pe) {
-			throw new ServerErrorException(500, pe);
+			throw new InternalServerErrorException(pe.getMessage(), pe);
 		}
 	}
 

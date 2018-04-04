@@ -23,7 +23,7 @@ import com.liferay.portal.kernel.service.ServiceContextFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
-import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.InternalServerErrorException;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -50,7 +50,7 @@ public class FormInstanceRecordServiceContextProvider
 			return new FormInstanceRecordServiceContext(serviceContext);
 		}
 		catch (PortalException pe) {
-			throw new ServerErrorException(500, pe);
+			throw new InternalServerErrorException(pe.getMessage(), pe);
 		}
 	}
 }

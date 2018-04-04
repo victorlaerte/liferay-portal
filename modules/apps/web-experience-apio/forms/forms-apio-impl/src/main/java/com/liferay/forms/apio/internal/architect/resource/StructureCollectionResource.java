@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
 
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.ServerErrorException;
 
 import org.osgi.service.component.annotations.Component;
@@ -99,7 +100,7 @@ public class StructureCollectionResource
 			return _ddmStructureLocalService.getStructure(structureId);
 		}
 		catch (PortalException pe) {
-			throw new ServerErrorException(500, pe);
+			throw new InternalServerErrorException(pe.getMessage(), pe);
 		}
 	}
 

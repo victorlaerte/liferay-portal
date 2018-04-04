@@ -29,7 +29,7 @@ import com.liferay.site.apio.architect.identifier.WebSiteIdentifier;
 
 import java.util.List;
 
-import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.InternalServerErrorException;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -117,7 +117,7 @@ public class DataProviderInstanceCollectionResource
 				dataProviderInstanceId);
 		}
 		catch (PortalException pe) {
-			throw new ServerErrorException(500, pe);
+			throw new InternalServerErrorException(pe.getMessage(), pe);
 		}
 	}
 
