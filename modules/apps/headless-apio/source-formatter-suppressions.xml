@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-
-<suppressions>
-	<source-check>
-		<suppress checks="JavaAPISignatureCheck" files="modules/apps/web-experience-apio/forms/forms-apio-impl/src/main/java/com/liferay/forms/apio/internal/architect/provider/FormInstanceRecordServiceContextProvider\.java" />
-	</source-check>
-</suppressions>
