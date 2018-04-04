@@ -43,9 +43,8 @@ public class FormInstanceRecordServiceContextProvider
 		HttpServletRequest httpServletRequest) {
 
 		try {
-			ServiceContext serviceContext =
-				ServiceContextFactory.getInstance(
-					DDMFormInstanceRecord.class.getName(), httpServletRequest);
+			ServiceContext serviceContext = ServiceContextFactory.getInstance(
+				DDMFormInstanceRecord.class.getName(), httpServletRequest);
 
 			return new FormInstanceRecordServiceContext(serviceContext);
 		}
@@ -53,4 +52,5 @@ public class FormInstanceRecordServiceContextProvider
 			throw new InternalServerErrorException(pe.getMessage(), pe);
 		}
 	}
+
 }

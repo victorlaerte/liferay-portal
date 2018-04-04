@@ -67,8 +67,7 @@ public class FormInstanceRecordCollectionResource
 		).addCreator(
 			this::_addFormInstanceRecord, Language.class,
 			FormInstanceRecordServiceContext.class,
-			MockPermissions::validPermission,
-			FormInstanceRecordForm::buildForm
+			MockPermissions::validPermission, FormInstanceRecordForm::buildForm
 		).build();
 	}
 
@@ -86,8 +85,7 @@ public class FormInstanceRecordCollectionResource
 		).addUpdater(
 			this::_updateFormInstanceRecord, Language.class,
 			FormInstanceRecordServiceContext.class,
-			MockPermissions::validPermission,
-			FormInstanceRecordForm::buildForm
+			MockPermissions::validPermission, FormInstanceRecordForm::buildForm
 		).build();
 	}
 
@@ -129,8 +127,7 @@ public class FormInstanceRecordCollectionResource
 	}
 
 	private DDMFormInstanceRecord _addFormInstanceRecord(
-		Long formInstanceId,
-		FormInstanceRecordForm formInstanceRecordForm,
+		Long formInstanceId, FormInstanceRecordForm formInstanceRecordForm,
 		Language language,
 		FormInstanceRecordServiceContext formInstanceRecordServiceContext) {
 
@@ -195,12 +192,14 @@ public class FormInstanceRecordCollectionResource
 	}
 
 	private void _setServiceContextAttributes(
-		ServiceContext serviceContext, boolean isDraft) {
+		ServiceContext serviceContext, boolean draft) {
 
-		if(isDraft) {
-			serviceContext.setAttribute("status", WorkflowConstants.STATUS_DRAFT);
+		if (draft) {
+			serviceContext.setAttribute(
+				"status", WorkflowConstants.STATUS_DRAFT);
 			serviceContext.setAttribute("validateDDMFormValues", Boolean.FALSE);
-			serviceContext.setWorkflowAction(WorkflowConstants.ACTION_SAVE_DRAFT);
+			serviceContext.setWorkflowAction(
+				WorkflowConstants.ACTION_SAVE_DRAFT);
 		}
 		else {
 			serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
@@ -209,8 +208,7 @@ public class FormInstanceRecordCollectionResource
 
 	private DDMFormInstanceRecord _updateFormInstanceRecord(
 		Long formInstanceRecordId,
-		FormInstanceRecordForm formInstanceRecordForm,
-		Language language,
+		FormInstanceRecordForm formInstanceRecordForm, Language language,
 		FormInstanceRecordServiceContext formInstanceRecordServiceContext) {
 
 		try {
@@ -236,8 +234,8 @@ public class FormInstanceRecordCollectionResource
 			return _ddmFormInstanceRecordService.updateFormInstanceRecord(
 				formInstanceRecordId, false, ddmFormValues, serviceContext);
 		}
-		catch (DDMFormValuesValidationException de) {
-			throw new BadRequestException(de.getMessage(), de);
+		catch (DDMFormValuesValidationException ddmfvve) {
+			throw new BadRequestException(ddmfvve.getMessage(), ddmfvve);
 		}
 		catch (PortalException pe) {
 			throw new InternalServerErrorException(pe.getMessage(), pe);

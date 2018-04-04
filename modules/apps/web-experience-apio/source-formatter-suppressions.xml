@@ -2,7 +2,6 @@
 
 <suppressions>
 	<source-check>
-		<suppress checks="JavaAPISignatureCheck" files="modules/apps/web-experience-apio/forms/forms-apio-impl/src/main/java/com/liferay/forms/apio/internal/architect/provider/DDMFormContentProvider\.java" />
-		<suppress checks="JavaAPISignatureCheck" files="modules/apps/web-experience-apio/portal/portal-apio-impl/src/main/java/com/liferay/portal/apio/internal/architect/provider/ServiceContextProvider\.java" />
+		<suppress checks="JavaAPISignatureCheck" files="modules/apps/web-experience-apio/forms/forms-apio-impl/src/main/java/com/liferay/forms/apio/internal/architect/provider/FormInstanceRecordServiceContextProvider\.java" />
 	</source-check>
 </suppressions>

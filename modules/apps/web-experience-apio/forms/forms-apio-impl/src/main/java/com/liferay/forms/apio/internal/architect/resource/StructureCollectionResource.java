@@ -23,7 +23,6 @@ import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
 
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.ServerErrorException;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
