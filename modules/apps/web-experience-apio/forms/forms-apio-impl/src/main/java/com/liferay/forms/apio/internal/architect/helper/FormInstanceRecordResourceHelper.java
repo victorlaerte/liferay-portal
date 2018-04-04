@@ -39,19 +39,6 @@ import javax.ws.rs.ServerErrorException;
  */
 public class FormInstanceRecordResourceHelper {
 
-	public static boolean _checkMajorVersion(
-		String currentVersionString, String submittedVersionString) {
-
-		double currentVersion = Double.parseDouble(currentVersionString);
-		double submittedVersion = Double.parseDouble(submittedVersionString);
-
-		if (currentVersion == submittedVersion) {
-			return true;
-		}
-
-		return false;
-	}
-
 	public static DDMFormValues getDDMFormValues(
 		String fieldValues, DDMForm ddmForm, Language language) {
 
