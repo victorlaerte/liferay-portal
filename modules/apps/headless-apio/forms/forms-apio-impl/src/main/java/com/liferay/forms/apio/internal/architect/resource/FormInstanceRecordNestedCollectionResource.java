@@ -153,6 +153,20 @@ public class FormInstanceRecordNestedCollectionResource
 			).addString(
 				"name", DDMFormFieldValue::getName
 			).build()
+		).addNestedList(
+			"fieldValues", this::_getFieldValues,
+			fieldValuesBuilder -> fieldValuesBuilder.types(
+				"FormFieldValue"
+			).addLocalizedStringByLocale(
+				"value",
+				(ddmFormFieldValue, locale) ->
+					LocalizedValueHelper.getLocalizedString(
+						ddmFormFieldValue.getValue(), locale)
+			).addString(
+				"identifier", DDMFormFieldValue::getInstanceId
+			).addString(
+				"name", DDMFormFieldValue::getName
+			).build()
 		).build();
 	}
 
@@ -194,6 +208,21 @@ public class FormInstanceRecordNestedCollectionResource
 			ddmFormInstanceRecord::getDDMFormValues
 		).map(
 			DDMFormValues::getDDMFormFieldValues
+		).orElse(
+			null
+		);
+	}
+
+	private List<DDMFormFieldValue> _getFieldValues(
+		DDMFormInstanceRecord ddmFormInstanceRecord) {
+
+		return Try.fromFallible(
+			() -> {
+				DDMFormValues ddmFormValues =
+					ddmFormInstanceRecord.getDDMFormValues();
+
+				return ddmFormValues.getDDMFormFieldValues();
+			}
 		).orElse(
 			null
 		);
