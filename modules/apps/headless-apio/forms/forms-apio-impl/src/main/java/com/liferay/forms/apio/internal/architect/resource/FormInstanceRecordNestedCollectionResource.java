@@ -153,19 +153,6 @@ public class FormInstanceRecordNestedCollectionResource
 			).addString(
 				"name", DDMFormFieldValue::getName
 			).build()
-		).addNestedList(
-			"fieldValues", this::_getFieldValues,
-			fieldValuesBuilder -> fieldValuesBuilder.types(
-				"FormFieldValue"
-			).addLocalizedStringByLocale(
-				"value",
-				LocalizedValueUtil.getLocalizedValue(
-					DDMFormFieldValue::getValue)
-			).addString(
-				"identifier", DDMFormFieldValue::getInstanceId
-			).addString(
-				"name", DDMFormFieldValue::getName
-			).build()
 		).build();
 	}
 
