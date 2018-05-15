@@ -64,7 +64,7 @@ public class MediaObjectNestedCollectionResource
 		return builder.addGetter(
 			this::_getPageItems
 		).addCreator(
-			this::_getFileEntry,
+			this::_addFileEntry,
 			_hasPermission.forAddingIn(RootFolderIdentifier.class),
 			MediaObjectCreatorForm::buildForm
 		).build();
@@ -125,7 +125,7 @@ public class MediaObjectNestedCollectionResource
 		).build();
 	}
 
-	private FileEntry _getFileEntry(
+	private FileEntry _addFileEntry(
 			long groupId, MediaObjectCreatorForm mediaObjectCreatorForm)
 		throws PortalException {
 
