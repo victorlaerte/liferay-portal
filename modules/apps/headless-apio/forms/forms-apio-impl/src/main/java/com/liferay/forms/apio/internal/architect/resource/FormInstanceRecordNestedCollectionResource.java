@@ -199,21 +199,6 @@ public class FormInstanceRecordNestedCollectionResource
 		);
 	}
 
-	private List<DDMFormFieldValue> _getFieldValues(
-		DDMFormInstanceRecord ddmFormInstanceRecord) {
-
-		return Try.fromFallible(
-			() -> {
-				DDMFormValues ddmFormValues =
-					ddmFormInstanceRecord.getDDMFormValues();
-
-				return ddmFormValues.getDDMFormFieldValues();
-			}
-		).orElse(
-			null
-		);
-	}
-
 	private PageItems<DDMFormInstanceRecord> _getPageItems(
 			Pagination pagination, Long formInstanceId)
 		throws PortalException {
