@@ -18,6 +18,8 @@ import static com.liferay.forms.apio.internal.util.FormInstanceRecordResourceUti
 import static com.liferay.forms.apio.internal.util.FormValuesUtil.getDDMFormValues;
 import static com.liferay.forms.apio.internal.util.LocalizedValueUtil.getLocalizedString;
 
+import com.google.gson.Gson;
+
 import com.liferay.apio.architect.functional.Try;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
@@ -32,12 +34,16 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecordVersion;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
+import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceRecordIdentifier;
+import com.liferay.forms.apio.internal.FileEntryValue;
+import com.liferay.forms.apio.internal.FormInstanceRecordServiceContext;
 import com.liferay.forms.apio.internal.architect.form.FormInstanceRecordForm;
 import com.liferay.forms.apio.internal.architect.locale.AcceptLocale;
 import com.liferay.forms.apio.internal.helper.UploadFileHelper;
@@ -47,12 +53,14 @@ import com.liferay.media.object.apio.architect.identifier.MediaObjectIdentifier;
 import com.liferay.person.apio.architect.identifier.PersonIdentifier;
 import com.liferay.portal.apio.permission.HasPermission;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.structured.content.apio.architect.util.StructuredContentUtil;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -182,9 +190,34 @@ public class FormInstanceRecordNestedCollectionResource
 		ServiceContext serviceContext = calculateServiceContextAttributes(
 			serviceContextWrapper, formInstanceRecordForm.isDraft());
 
+		DDMForm ddmForm = ddmStructure.getDDMForm();
+
+		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
+
+		_linkFiles(ddmFormFields, ddmFormValues.getDDMFormFieldValues());
+
 		return _ddmFormInstanceRecordService.addFormInstanceRecord(
 			ddmFormInstance.getGroupId(), ddmFormInstance.getFormInstanceId(),
 			ddmFormValues, serviceContext);
+	}
+
+	private Long _extractFileEntryId(DDMFormFieldValue ddmFormFieldValue) {
+		Value value = ddmFormFieldValue.getValue();
+
+		String fileEntryUrl = (String)value.getValues().values().toArray()[0];
+
+		String fileEntryId = fileEntryUrl.substring(
+			fileEntryUrl.lastIndexOf("/") + 1);
+
+		return Long.valueOf(fileEntryId);
+	}
+
+	private Optional<DDMFormFieldValue> _findField(
+		DDMFormField formField, List<DDMFormFieldValue> formFieldValues) {
+
+		return formFieldValues.stream().filter(
+			value -> value.getName().equals(formField.getName())
+		).findFirst();
 	}
 
 	private List<DDMFormFieldValue> _getFieldValues(
@@ -212,6 +245,43 @@ public class FormInstanceRecordNestedCollectionResource
 			formInstanceId);
 
 		return new PageItems<>(ddmFormInstanceRecords, count);
+	}
+
+	private void _linkFiles(
+		List<DDMFormField> ddmFormFields,
+		List<DDMFormFieldValue> ddmFormFieldValues) {
+
+		ddmFormFields.stream().filter(
+			formField -> formField.getType().equals("document_library")
+		).map(
+			field -> _findField(field, ddmFormFieldValues)
+		).forEach(
+			optional -> optional.ifPresent(ddmFormFieldValue -> {
+				try {
+					Long fileEntryId = _extractFileEntryId(ddmFormFieldValue);
+
+					FileEntry fileEntry = _dlAppService.getFileEntry(
+						fileEntryId);
+
+					FileEntryValue fileEntryValue = new FileEntryValue(
+						fileEntry.getGroupId(), fileEntry.getUuid());
+
+					Gson gson = new Gson();
+
+					String jsonValue = gson.toJson(fileEntryValue);
+
+					UnlocalizedValue unlocalizedValue = new UnlocalizedValue(
+						jsonValue);
+
+					ddmFormFieldValue.setValue(unlocalizedValue);
+				}
+				catch (PortalException pe) {
+
+					// What do we have to do here?
+
+				}
+			})
+		);
 	}
 
 	private DDMFormInstanceRecord _updateFormInstanceRecord(
