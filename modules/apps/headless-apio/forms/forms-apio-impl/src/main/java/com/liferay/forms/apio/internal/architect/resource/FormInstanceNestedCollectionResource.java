@@ -31,7 +31,6 @@ import com.liferay.content.space.apio.architect.identifier.ContentSpaceIdentifie
 import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
-import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion;
@@ -44,8 +43,8 @@ import com.liferay.forms.apio.internal.form.MediaObjectCreatorForm;
 import com.liferay.forms.apio.internal.representable.EvaluateContextRoute;
 import com.liferay.forms.apio.internal.representable.FormContextIdentifier;
 import com.liferay.forms.apio.internal.representable.FormContextWrapper;
+import com.liferay.forms.apio.internal.util.EvaluateContextUtil;
 import com.liferay.forms.apio.internal.util.FormInstanceRepresentorUtil;
-import com.liferay.forms.apio.internal.util.FormValuesUtil;
 import com.liferay.media.object.apio.architect.identifier.MediaObjectIdentifier;
 import com.liferay.person.apio.architect.identifier.PersonIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -53,8 +52,6 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.LocaleThreadLocal;
-import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.io.InputStream;
 
@@ -205,44 +202,24 @@ public class FormInstanceNestedCollectionResource
 
 	private FormContextWrapper _evaluateContext(
 		Long ddmFormInstanceId, FormContextForm formContextForm,
-		DDMFormRenderingContext ddmFormRenderingContext)
-		throws PortalException {
+		DDMFormRenderingContext ddmFormRenderingContext, Language language) {
+
+		EvaluateContextUtil evaluateContextUtil = new EvaluateContextUtil(
+			_ddmFormTemplateContextFactory);
+
+		String fieldValues = formContextForm.getFieldValues();
 
 		Locale locale = language.getPreferredLocale();
 
-		LocaleThreadLocal.setThemeDisplayLocale(locale);
-
-		DDMFormInstance ddmFormInstance =
-			_ddmFormInstanceService.getFormInstance(ddmFormInstanceId);
-
-		String fieldValues = formContextForm.getFieldValues();
-		ddmFormRenderingContext.setLocale(locale);
-
-		DDMForm ddmForm = Try.fromFallible(
-			() -> ddmFormInstance.getStructure()
+		return Try.fromFallible(
+			() -> _ddmFormInstanceService.getFormInstance(ddmFormInstanceId)
+		).map(
+			DDMFormInstance::getStructure
 		).map(
 			DDMStructure::getDDMForm
-		).orElse(
-			null
-		);
-
-		Try.fromFallible(
-			() -> FormValuesUtil.getDDMFormValues(fieldValues, ddmForm, locale)
-		).ifSuccess(
-			ddmFormRenderingContext::setDDMFormValues
-		);
-
-		return _getEvaluationResult(ddmForm, ddmFormRenderingContext);
-	}
-
-	private FormContextWrapper _getEvaluationResult(
-		DDMForm ddmForm, DDMFormRenderingContext ddmFormRenderingContext) {
-
-		return Try.fromFallible(
-			() -> _ddmFormTemplateContextFactory.create(
-				ddmForm, ddmFormRenderingContext)
 		).map(
-			FormContextWrapper::new
+			evaluateContextUtil.evaluateContext(
+				fieldValues, ddmFormRenderingContext, locale)
 		).orElse(
 			null
 		);
