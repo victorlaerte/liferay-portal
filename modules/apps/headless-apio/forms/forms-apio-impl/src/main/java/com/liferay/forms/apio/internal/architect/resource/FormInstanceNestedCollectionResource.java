@@ -50,7 +50,6 @@ import com.liferay.person.apio.architect.identifier.PersonIdentifier;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.InputStream;
@@ -260,14 +259,14 @@ public class FormInstanceNestedCollectionResource
 
 		long size = binaryFile.getSize();
 
-		DDMFormInstance formInstance =
-			_ddmFormInstanceService.getFormInstance(ddmFormInstanceId);
+		DDMFormInstance formInstance = _ddmFormInstanceService.getFormInstance(
+			ddmFormInstanceId);
 
 		long repositoryId = formInstance.getGroupId();
 
 		return _dlAppService.addFileEntry(
-			repositoryId, 0, sourceFileName, mimeType, title,
-			description, changelog, inputStream, size, serviceContext);
+			repositoryId, 0, sourceFileName, mimeType, title, description,
+			changelog, inputStream, size, serviceContext);
 	}
 
 	@Reference

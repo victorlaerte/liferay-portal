@@ -19,6 +19,7 @@ import static com.liferay.forms.apio.internal.util.FormValuesUtil.getDDMFormValu
 import static com.liferay.forms.apio.internal.util.LocalizedValueUtil.getLocalizedString;
 
 import com.google.gson.Gson;
+
 import com.liferay.apio.architect.functional.Try;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
@@ -51,7 +52,6 @@ import com.liferay.media.object.apio.architect.identifier.MediaObjectIdentifier;
 import com.liferay.person.apio.architect.identifier.PersonIdentifier;
 import com.liferay.portal.apio.permission.HasPermission;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -254,31 +254,27 @@ public class FormInstanceRecordNestedCollectionResource
 		).map(
 			field -> _findField(field, ddmFormFieldValues)
 		).forEach(
-			optional -> optional.ifPresent(ddmFormFieldValue -> {
-				try {
-					Long fileEntryId = _extractFileEntryId(ddmFormFieldValue);
+			optional -> optional.ifPresent(this::_setFileEntryAsFormFieldValue)
+		);
+	}
 
-					FileEntry fileEntry = _dlAppService.getFileEntry(
-						fileEntryId);
+	private void _setFileEntryAsFormFieldValue(
+		DDMFormFieldValue ddmFormFieldValue) {
 
-					FileEntryValue fileEntryValue = new FileEntryValue(
-						fileEntry.getGroupId(), fileEntry.getUuid());
+		Long fileEntryId = _extractFileEntryId(ddmFormFieldValue);
+		Gson gson = new Gson();
 
-					Gson gson = new Gson();
-
-					String jsonValue = gson.toJson(fileEntryValue);
-
-					UnlocalizedValue unlocalizedValue = new UnlocalizedValue(
-						jsonValue);
-
-					ddmFormFieldValue.setValue(unlocalizedValue);
-				}
-				catch (PortalException pe) {
-
-					// What do we have to do here?
-
-				}
-			})
+		Try.fromFallible(
+			() -> _dlAppService.getFileEntry(fileEntryId)
+		).map(
+			fileEntry -> new FileEntryValue(
+				fileEntry.getGroupId(), fileEntry.getUuid())
+		).map(
+			gson::toJson
+		).map(
+			UnlocalizedValue::new
+		).ifSuccess(
+			ddmFormFieldValue::setValue
 		);
 	}
 
