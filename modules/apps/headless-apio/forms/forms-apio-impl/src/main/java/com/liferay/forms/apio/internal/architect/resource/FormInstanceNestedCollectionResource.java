@@ -34,7 +34,6 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFact
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion;
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
@@ -207,7 +206,6 @@ public class FormInstanceNestedCollectionResource
 			_ddmFormTemplateContextFactory);
 
 		String fieldValues = formContextForm.getFieldValues();
-
 		Locale locale = language.getPreferredLocale();
 
 		return Try.fromFallible(
@@ -215,10 +213,8 @@ public class FormInstanceNestedCollectionResource
 		).map(
 			DDMFormInstance::getStructure
 		).map(
-			DDMStructure::getDDMForm
-		).map(
-			evaluateContextUtil.evaluateContext(
-				fieldValues, ddmFormRenderingContext, locale)
+			ddmStructure -> evaluateContextUtil.evaluateContext(
+				fieldValues, ddmStructure, ddmFormRenderingContext, locale)
 		).orElse(
 			null
 		);
