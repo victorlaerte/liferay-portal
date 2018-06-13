@@ -12,12 +12,18 @@
  * details.
  */
 
-package com.liferay.forms.apio.internal.representable;
+package com.liferay.forms.apio.internal.architect.route;
 
-import com.liferay.apio.architect.identifier.Identifier;
+import com.liferay.apio.architect.customactions.PostRoute;
 
 /**
  * @author Javier Gamarra
  */
-public interface FormContextIdentifier extends Identifier<String> {
+public class EvaluateContextRoute extends PostRoute {
+
+	@Override
+	public String getName() {
+		return "evaluate-context";
+	}
+
 }

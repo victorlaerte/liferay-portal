@@ -12,18 +12,18 @@
  * details.
  */
 
-package com.liferay.forms.apio.internal.representable;
+package com.liferay.forms.apio.internal.architect.route;
 
 import com.liferay.apio.architect.customactions.PostRoute;
 
 /**
  * @author Javier Gamarra
  */
-public class EvaluateContextRoute extends PostRoute {
+public class UploadFileRoute extends PostRoute {
 
 	@Override
 	public String getName() {
-		return "evaluate-context";
+		return "upload-file-to-root-folder";
 	}
 
 }
