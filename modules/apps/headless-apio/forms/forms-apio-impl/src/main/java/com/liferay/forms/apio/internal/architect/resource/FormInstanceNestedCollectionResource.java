@@ -35,12 +35,13 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
+import com.liferay.forms.apio.architect.identifier.FormContextIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.forms.apio.internal.architect.form.FormContextForm;
 import com.liferay.forms.apio.internal.architect.form.MediaObjectCreatorForm;
 import com.liferay.forms.apio.internal.architect.route.EvaluateContextRoute;
-import com.liferay.forms.apio.architect.identifier.FormContextIdentifier;
+import com.liferay.forms.apio.internal.architect.route.UploadFileRoute;
 import com.liferay.forms.apio.internal.model.FormContextWrapper;
 import com.liferay.forms.apio.internal.util.EvaluateContextUtil;
 import com.liferay.forms.apio.internal.util.FormInstanceRepresentorUtil;
@@ -51,7 +52,6 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.InputStream;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -94,12 +94,13 @@ public class FormInstanceNestedCollectionResource
 
 		return builder.addGetter(
 			_ddmFormInstanceService::getFormInstance
-		).addCustomRoute(evaluateContextRoute,
-			this::_evaluateContext, FormContextIdentifier.class,
-			(credentials, aLong) -> true, FormContextForm::buildForm,
-			DDMFormRenderingContext.class, Language.class
-		).addCustomRoute(uploadFileRoute,
-			this::uploadFile, MediaObjectIdentifier.class,
+		).addCustomRoute(
+			evaluateContextRoute, this::_evaluateContext,
+			FormContextIdentifier.class, (credentials, aLong) -> true,
+			FormContextForm::buildForm, DDMFormRenderingContext.class,
+			Language.class
+		).addCustomRoute(
+			uploadFileRoute, this::_uploadFile, MediaObjectIdentifier.class,
 			(credentials, aLong) -> true, MediaObjectCreatorForm::buildForm
 		).build();
 	}
