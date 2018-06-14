@@ -18,8 +18,6 @@ import static com.liferay.forms.apio.internal.util.FormInstanceRecordResourceUti
 import static com.liferay.forms.apio.internal.util.FormValuesUtil.getDDMFormValues;
 import static com.liferay.forms.apio.internal.util.LocalizedValueUtil.getLocalizedString;
 
-import com.google.gson.Gson;
-
 import com.liferay.apio.architect.functional.Try;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
@@ -27,15 +25,12 @@ import com.liferay.apio.architect.representor.Representor;
 import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
-import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecordVersion;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
-import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
@@ -56,11 +51,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.structured.content.apio.architect.util.StructuredContentUtil;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -194,43 +185,12 @@ public class FormInstanceRecordNestedCollectionResource
 
 		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
 
-		_linkFiles(ddmFormFields, ddmFormValues.getDDMFormFieldValues());
+		_uploadFileHelper.linkFiles(
+			ddmFormFields, ddmFormValues.getDDMFormFieldValues());
 
 		return _ddmFormInstanceRecordService.addFormInstanceRecord(
 			ddmFormInstance.getGroupId(), ddmFormInstance.getFormInstanceId(),
 			ddmFormValues, serviceContext);
-	}
-
-	private Long _extractFileEntryId(DDMFormFieldValue ddmFormFieldValue) {
-		return Try.fromFallible(
-			() -> ddmFormFieldValue.getValue()
-		).map(
-			Value::getValues
-		).map(
-			Map::values
-		).map(
-			Collection::stream
-		).mapOptional(
-			Stream::findFirst
-		).map(
-			fileEntryUrl -> fileEntryUrl.substring(
-				fileEntryUrl.lastIndexOf("/") + 1)
-		).map(
-			Long::valueOf
-		).orElse(
-			null
-		);
-	}
-
-	private Optional<DDMFormFieldValue> _findField(
-		DDMFormField formField, List<DDMFormFieldValue> ddmFormFieldValues) {
-
-		Stream<DDMFormFieldValue> ddmFormFieldValuesStream =
-			ddmFormFieldValues.stream();
-
-		return ddmFormFieldValuesStream.filter(
-			value -> value.getName().equals(formField.getName())
-		).findFirst();
 	}
 
 	private List<DDMFormFieldValue> _getFieldValues(
@@ -258,42 +218,6 @@ public class FormInstanceRecordNestedCollectionResource
 			formInstanceId);
 
 		return new PageItems<>(ddmFormInstanceRecords, count);
-	}
-
-	private void _linkFiles(
-		List<DDMFormField> ddmFormFields,
-		List<DDMFormFieldValue> ddmFormFieldValues) {
-
-		Stream<DDMFormField> ddmFormFieldsStream = ddmFormFields.stream();
-
-		ddmFormFieldsStream.filter(
-			formField -> formField.getType().equals("document_library")
-		).map(
-			field -> _findField(field, ddmFormFieldValues)
-		).forEach(
-			optional -> optional.ifPresent(this::_setFileEntryAsFormFieldValue)
-		);
-	}
-
-	private void _setFileEntryAsFormFieldValue(
-		DDMFormFieldValue ddmFormFieldValue) {
-
-		Gson gson = new Gson();
-
-		Try.fromFallible(
-			() -> _extractFileEntryId(ddmFormFieldValue)
-		).map(
-			_dlAppService::getFileEntry
-		).map(
-			fileEntry -> new FileEntryValue(
-				fileEntry.getGroupId(), fileEntry.getUuid())
-		).map(
-			gson::toJson
-		).map(
-			UnlocalizedValue::new
-		).ifSuccess(
-			ddmFormFieldValue::setValue
-		);
 	}
 
 	private DDMFormInstanceRecord _updateFormInstanceRecord(
@@ -330,7 +254,7 @@ public class FormInstanceRecordNestedCollectionResource
 	private DDMFormInstanceService _ddmFormInstanceService;
 
 	@Reference
-	private DLAppService _dlAppService;
+	private UploadFileHelper _uploadFileHelper;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord)"
