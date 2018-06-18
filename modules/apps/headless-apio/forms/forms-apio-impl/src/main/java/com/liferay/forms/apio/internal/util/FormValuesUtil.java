@@ -112,8 +112,8 @@ public final class FormValuesUtil {
 		ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
 	}
 
-	private static final Value _EMPTY_VALUE = new UnlocalizedValue(
-		(String)null);
+	private static final Value _EMPTY_VALUE =
+		new UnlocalizedValue((String) null);
 
 	private static class FormFieldValueListToken
 		extends TypeToken<ArrayList<FormFieldValue>> {
