@@ -113,10 +113,11 @@ public class RequestInfo {
 		public class ApplicationURLStep {
 
 			/**
-			 * Add information to the builder about the application server URL.
+			 * Add information about the application server URL to the builder.
 			 *
 			 * @param  applicationURL the application server URL
 			 * @return the builder's next step
+			 * @review
 			 */
 			public EmbeddedStep applicationURL(ApplicationURL applicationURL) {
 				_applicationURL = applicationURL;

@@ -41,6 +41,7 @@ import org.osgi.service.component.annotations.Reference;
  *
  * @author Alejandro Hernández
  * @author Zoltán Takács
+ * @review
  */
 @Component(
 	property = {

@@ -42,12 +42,13 @@ import java.util.Optional;
 public class MockSingleModelWriter {
 
 	/**
-	 * Writes a {@link RootModel} with the hierarchy of embedded models and
+	 * Writes a {@link RootModel}, with the hierarchy of embedded models and
 	 * multiple fields.
 	 *
-	 * @param  singleModelMessageMapper the {@code SingleModelMessageMapper} to
+	 * @param  singleModelMessageMapper the {@link SingleModelMessageMapper} to
 	 *         use for writing the JSON object
-	 * @return the string containing the JSON object
+	 * @return the {@code String} containing the JSON Object.
+	 * @review
 	 */
 	public static String write(
 		SingleModelMessageMapper<RootModel> singleModelMessageMapper) {

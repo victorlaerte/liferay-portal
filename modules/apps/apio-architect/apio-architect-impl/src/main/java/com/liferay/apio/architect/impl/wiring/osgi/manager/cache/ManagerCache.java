@@ -46,7 +46,7 @@ import javax.ws.rs.core.Variant;
 import javax.ws.rs.core.Variant.VariantListBuilder;
 
 /**
- * Acts as a central cache for most managers.
+ * Acts as a central cache for most of the managers.
  *
  * <p>
  * There should only be one instance of this class, accessible through {@link
@@ -91,6 +91,7 @@ public class ManagerCache {
 	 *         the data
 	 * @return the batch result message mapper, if present; {@code
 	 *         Optional#empty()} otherwise
+	 * @review
 	 */
 	public <T> Optional<BatchResultMessageMapper<T>>
 		getBatchResultMessageMapperOptional(
@@ -469,8 +470,9 @@ public class ManagerCache {
 	/**
 	 * Adds a batch result message mapper.
 	 *
-	 * @param mediaType the media type
-	 * @param batchResultMessageMapper the batch result message mapper
+	 * @param  mediaType the media type
+	 * @param  batchResultMessageMapper the batch result message mapper
+	 * @review
 	 */
 	public void putBatchResultMessageMapper(
 		MediaType mediaType,

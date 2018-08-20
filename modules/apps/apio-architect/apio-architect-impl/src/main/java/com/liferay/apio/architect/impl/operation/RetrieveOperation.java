@@ -34,9 +34,21 @@ public class RetrieveOperation implements Operation {
 	public RetrieveOperation(
 		String resourceName, boolean collection, String uri) {
 
+		this(resourceName, collection, uri, null);
+	}
+
+	public RetrieveOperation(
+		String resourceName, boolean collection, String uri, String custom) {
+
 		_resourceName = resourceName;
 		_collection = collection;
 		_uri = uri;
+		_custom = custom;
+	}
+
+	@Override
+	public String getCustom() {
+		return _custom;
 	}
 
 	@Override
@@ -51,7 +63,7 @@ public class RetrieveOperation implements Operation {
 
 	@Override
 	public String getName() {
-		return _resourceName + "/retrieve";
+		return _resourceName + "/" + (isCustom() ? _custom : "retrieve");
 	}
 
 	@Override
@@ -64,7 +76,16 @@ public class RetrieveOperation implements Operation {
 		return _collection;
 	}
 
+	public boolean isCustom() {
+		if (_custom != null) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private final boolean _collection;
+	private final String _custom;
 	private final String _resourceName;
 	private final String _uri;
 

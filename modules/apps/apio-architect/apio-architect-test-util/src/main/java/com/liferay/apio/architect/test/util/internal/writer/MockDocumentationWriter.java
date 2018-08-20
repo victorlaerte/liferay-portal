@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Provides methods that test {@code DocumentationMessageMapper} objects.
+ * Provides methods that test {@link DocumentationMessageMapper} objects.
  *
  * <p>
  * This class shouldn't be instantiated.
@@ -45,27 +45,28 @@ import java.util.Optional;
 public class MockDocumentationWriter {
 
 	/**
-	 * Writes a {@code Documentation} object.
+	 * Writes a {@link Documentation} object.
 	 *
 	 * @param  documentationMessageMapper the {@code DocumentationMessageMapper}
 	 *         to use for writing the JSON object
-	 * @return the string containing the JSON object
+	 * @return the {@code String} containing the JSON Object.
+	 * @review
 	 */
 	public static String write(
 		DocumentationMessageMapper documentationMessageMapper) {
 
 		CollectionRoutes.Builder<String, Object> collectionBuilder =
 			new CollectionRoutesImpl.BuilderImpl<>(
-				"name", null,
+				"name", __ -> null,
 				__ -> {
 				},
-				__ -> null, __ -> null);
+				__ -> null, __ -> null, __ -> Optional.empty());
 
 		ItemRoutes.Builder itemBuilder = new ItemRoutesImpl.BuilderImpl<>(
-			"name", null,
+			"name", __ -> null,
 			__ -> {
 			},
-			__ -> null, __ -> Optional.empty());
+			__ -> null, __ -> Optional.empty(), __ -> Optional.empty());
 
 		NestedCollectionRoutes.Builder nestedBuilder =
 			new NestedCollectionRoutesImpl.BuilderImpl<>(

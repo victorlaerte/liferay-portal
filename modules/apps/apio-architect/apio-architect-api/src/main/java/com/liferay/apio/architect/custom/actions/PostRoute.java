@@ -12,27 +12,21 @@
  * details.
  */
 
-package com.liferay.apio.architect.test.util.pagination;
+package com.liferay.apio.architect.custom.actions;
 
-import com.liferay.apio.architect.impl.pagination.PaginationImpl;
-import com.liferay.apio.architect.pagination.Pagination;
+import com.liferay.apio.architect.operation.HTTPMethod;
 
 /**
- * Creates {@link Pagination} instances.
+ * Models a resource route with POST semantics
  *
- * @author Julio Camarero
+ * @author Javier Gamarra
+ * @review
  */
-public class PaginationRequest {
+public abstract class PostRoute extends CustomRoute {
 
-	/**
-	 * Creates a new {@code Pagination} instance.
-	 *
-	 * @param  itemsPerPage the number of items per page
-	 * @param  pageNumber the page number
-	 * @return the {@code Pagination} instance
-	 */
-	public static Pagination of(int itemsPerPage, int pageNumber) {
-		return new PaginationImpl(itemsPerPage, pageNumber);
+	@Override
+	public HTTPMethod getMethod() {
+		return HTTPMethod.POST;
 	}
 
 }
