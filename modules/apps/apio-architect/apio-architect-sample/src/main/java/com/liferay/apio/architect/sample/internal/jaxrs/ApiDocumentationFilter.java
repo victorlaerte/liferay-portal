@@ -25,11 +25,12 @@ import javax.ws.rs.core.UriInfo;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * Provides a JAX-RS filter that adds a {@code Link} header to the base
- * endpoint's responses. This header includes the URL of the Hydra API
- * documentation so a hypermedia consumer can discover it.
+ * JAX-RS filter that add a Link header to the responses of the base endpoint.
+ * This Link header will include the url of the hydra api documentation to be
+ * discovered by a hypermedia consumer.
  *
  * @author Víctor Galán
+ * @review
  */
 @Component(
 	property = {

@@ -23,7 +23,7 @@ import com.liferay.apio.architect.pagination.Pagination;
  * @author Alejandro Hernández
  * @author Carlos Sierra Andrés
  * @author Jorge Ferrer
- * @see    com.liferay.apio.architect.pagination.Page
+ * @see    Page
  */
 public class PaginationImpl implements Pagination {
 

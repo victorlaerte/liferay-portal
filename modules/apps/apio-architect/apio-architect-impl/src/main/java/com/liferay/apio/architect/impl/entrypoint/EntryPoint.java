@@ -17,9 +17,10 @@ package com.liferay.apio.architect.impl.entrypoint;
 import java.util.List;
 
 /**
- * Holds information about the Apio Architect application's entry point.
+ * Holds information about the entry point of the Apio Architect application.
  *
  * @author Alejandro Hernández
+ * @review
  */
 public interface EntryPoint {
 
@@ -27,6 +28,7 @@ public interface EntryPoint {
 	 * Returns the list of root resources.
 	 *
 	 * @return the list of root resources
+	 * @review
 	 */
 	public List<String> getResourceNames();
 

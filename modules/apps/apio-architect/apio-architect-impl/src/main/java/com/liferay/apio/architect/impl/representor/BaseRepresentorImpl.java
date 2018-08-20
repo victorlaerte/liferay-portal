@@ -208,11 +208,11 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a relative URL function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a relative URL function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the URL
+	 * @param  key the field's name
+	 * @param  function the function used to get the URL
+	 * @review
 	 */
 	protected void addApplicationRelativeURLFunction(
 		String key, Function<T, String> function) {
@@ -221,11 +221,11 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a binary function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a binary function to the {@code Representor}.
 	 *
-	 * @param key the binary resource's name
-	 * @param binaryFunction the function used to get the binaries
+	 * @param  key the binary resource's name
+	 * @param  binaryFunction the function used to get the binaries
+	 * @review
 	 */
 	protected void addBinaryFunction(
 		String key, BinaryFunction<T> binaryFunction) {
@@ -236,11 +236,11 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a boolean function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a boolean function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the boolean
+	 * @param  key the field's name
+	 * @param  function the function used to get the boolean
+	 * @review
 	 */
 	protected void addBooleanFunction(
 		String key, Function<T, Boolean> function) {
@@ -249,11 +249,11 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a boolean list function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a boolean list function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the boolean list
+	 * @param  key the field's name
+	 * @param  function the function used to get the boolean list
+	 * @review
 	 */
 	protected void addBooleanListFunction(
 		String key, Function<T, List<Boolean>> function) {
@@ -262,11 +262,11 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a language function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a language function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the language function
+	 * @param  key the field's name
+	 * @param  function the function used to get the language function
+	 * @review
 	 */
 	protected void addLanguageFunction(
 		String key, Function<T, Function<AcceptLanguage, String>> function) {
@@ -275,24 +275,24 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a link function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a link function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the link
+	 * @param  key the field's name
+	 * @param  function the function used to get the link
+	 * @review
 	 */
 	protected void addLinkFunction(String key, Function<T, String> function) {
 		_addFieldFunction(key, function, "LINK");
 	}
 
 	/**
-	 * Adds a nested field to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a nested field to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param transformFunction the function that transforms the model into the
-	 *        model used inside the {@link NestedRepresentor}
-	 * @param function the function used to get the nested representor
+	 * @param  key the field's name
+	 * @param  transformFunction the function that transforms the model into the
+	 *         model used inside the nested representor
+	 * @param  function the function used to get the {@link NestedRepresentor}
+	 * @review
 	 */
 	protected <S> void addNestedField(
 		String key, Function<T, S> transformFunction,
@@ -325,14 +325,14 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a nested list field to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a nested list field to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param transformFunction the function that transforms the model into the
-	 *        list whose models are used inside the {@link NestedRepresentor}
-	 * @param function the function that creates the nested representor for each
-	 *        model
+	 * @param  key the field's name
+	 * @param  transformFunction the function that transforms the model into the
+	 *         list whose models are used inside the nested representor
+	 * @param  function the function that creates the nested representor for
+	 *         each model
+	 * @review
 	 */
 	protected <S> void addNestedListField(
 		String key, Function<T, List<S>> transformFunction,
@@ -365,22 +365,22 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a number function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a number function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the number
+	 * @param  key the field's name
+	 * @param  function the function used to get the number
+	 * @review
 	 */
 	protected void addNumberFunction(String key, Function<T, Number> function) {
 		_addFieldFunction(key, function, "NUMBER");
 	}
 
 	/**
-	 * Adds a number list function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a number list function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the number list
+	 * @param  key the field's name
+	 * @param  function the function used to get the number list
+	 * @review
 	 */
 	protected void addNumberListFunction(
 		String key, Function<T, List<Number>> function) {
@@ -391,10 +391,11 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	/**
 	 * Adds information about a related model.
 	 *
-	 * @param key the relation's name
-	 * @param identifierClass the related model's identifier class
-	 * @param modelToIdentifierFunction the function used to get the related
-	 *        model's identifier
+	 * @param  key the relation's name
+	 * @param  identifierClass the related model identifier's class
+	 * @param  modelToIdentifierFunction the function used to get the related
+	 *         model's identifier
+	 * @review
 	 */
 	protected <S> void addRelatedModel(
 		String key, Class<? extends Identifier<S>> identifierClass,
@@ -407,11 +408,11 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a relative URL function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a relative URL function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the URL
+	 * @param  key the field's name
+	 * @param  function the function used to get the URL
+	 * @review
 	 */
 	protected void addRelativeURLFunction(
 		String key, Function<T, String> function) {
@@ -420,22 +421,22 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds a string function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a string function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the string
+	 * @param  key the field's name
+	 * @param  function the function used to get the string
+	 * @review
 	 */
 	protected void addStringFunction(String key, Function<T, String> function) {
 		_addFieldFunction(key, function, "STRING");
 	}
 
 	/**
-	 * Adds a string list function to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds a string list function to the {@code Representor}.
 	 *
-	 * @param key the field's name
-	 * @param function the function used to get the string list
+	 * @param  key the field's name
+	 * @param  function the function used to get the string list
+	 * @review
 	 */
 	protected void addStringListFunction(
 		String key, Function<T, List<String>> function) {
@@ -444,11 +445,11 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 	}
 
 	/**
-	 * Adds the types to the {@link
-	 * com.liferay.apio.architect.representor.Representor}.
+	 * Adds the types to the {@code Representor}.
 	 *
-	 * @param type the first type
-	 * @param types the rest of the types
+	 * @param  type the first type
+	 * @param  types the rest of the types
+	 * @review
 	 */
 	protected void addTypes(String type, String... types) {
 		primaryType = type;
@@ -639,10 +640,11 @@ public abstract class BaseRepresentorImpl<T> implements BaseRepresentor<T> {
 			 * Returns the generic instance of this builder's step
 			 *
 			 * <p>
-			 * All descendants should return {@code this}.
+			 * All descendants should just return {@code this}
 			 * </p>
 			 *
 			 * @return the generic instance of this builder's step
+			 * @review
 			 */
 			protected abstract V getThis();
 

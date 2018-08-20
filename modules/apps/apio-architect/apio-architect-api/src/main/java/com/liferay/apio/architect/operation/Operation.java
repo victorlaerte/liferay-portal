@@ -29,6 +29,14 @@ import java.util.Optional;
 public interface Operation {
 
 	/**
+	 * Returns the custom part of the operation
+	 *
+	 * @return the custom part of the operation
+	 * @review
+	 */
+	public String getCustom();
+
+	/**
 	 * Returns this operation's expected form, if present; returns {@code
 	 * Optional#empty()} otherwise.
 	 *
@@ -41,6 +49,7 @@ public interface Operation {
 	 * Returns the operation's method.
 	 *
 	 * @return the operation's method
+	 * @review
 	 */
 	public HTTPMethod getHttpMethod();
 
@@ -48,22 +57,32 @@ public interface Operation {
 	 * Returns the operation's name.
 	 *
 	 * @return the operation's name
+	 * @review
 	 */
 	public String getName();
 
 	/**
-	 * Returns the operation's URI.
+	 * Returns the operation's uri.
 	 *
-	 * @return the operation's URI
+	 * @return the operation's uri
+	 * @review
 	 */
 	public Optional<String> getURIOptional();
 
 	/**
-	 * Whether this is a collection's operation.
+	 * Return {@code true} if this is a collection's operation
 	 *
-	 * @return {@code true} if this is a collection's operation; {@code false}
-	 *         otherwise
+	 * @return {@code true} if this is a collection's operation
+	 * @review
 	 */
 	public boolean isCollection();
+
+	/**
+	 * Return {@code true} if this is a custom operation
+	 *
+	 * @return {@code true} if this is a custom operation
+	 * @review
+	 */
+	public boolean isCustom();
 
 }

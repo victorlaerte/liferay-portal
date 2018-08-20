@@ -162,6 +162,10 @@ public final class URLCreator {
 					return "batch/" + uri;
 				}
 
+				if (operation.isCustom()) {
+					return "c/" + uri + "/" + operation.getCustom();
+				}
+
 				if (operation instanceof CreateOperation) {
 					return "p/" + uri;
 				}

@@ -36,14 +36,16 @@ import javax.servlet.http.HttpServletRequest;
  * Creates {@link BatchEndpoint} instances.
  *
  * @author Alejandro Hernández
+ * @review
  */
 public interface BatchEndpointBuilder {
 
 	/**
-	 * Adds information to the builder about the resource's name.
+	 * Adds information about the resource's name to the builder.
 	 *
 	 * @param  name the resource's name
 	 * @return the builder's following step
+	 * @review
 	 */
 	public static <T, S> RequestStep<T, S> name(String name) {
 		return httpServletRequest -> singleModelFunction ->
@@ -143,7 +145,8 @@ public interface BatchEndpointBuilder {
 		 * Constructs the {@link BatchEndpoint} instance with the information
 		 * provided to the builder.
 		 *
-		 * @return the batch endpoint instance
+		 * @return the {@code BatchEndpointImpl} instance
+		 * @review
 		 */
 		public BatchEndpoint<T> build();
 
@@ -154,11 +157,12 @@ public interface BatchEndpointBuilder {
 
 		/**
 		 * Adds information to the builder about the supplier that provides the
-		 * current resource's {@link CollectionRoutes}.
+		 * {@code CollectionRoutes} of the current resource.
 		 *
-		 * @param  supplier the supplier that provides the current resource's
-		 *         collection routes
+		 * @param  supplier the supplier that provides the {@code
+		 *         CollectionRoutes} of the current resource
 		 * @return the builder's following step
+		 * @review
 		 */
 		public NestedCollectionRoutesFunctionStep<T, S>
 			collectionRoutesSupplier(
@@ -171,11 +175,14 @@ public interface BatchEndpointBuilder {
 
 		/**
 		 * Adds information to the builder about the function that gets the
-		 * {@link NestedCollectionRoutes} from a resource nested in the current
+		 * {@code NestedCollectionRoutes} of a nested resource of the current
 		 * resource.
 		 *
-		 * @param  function the function
+		 * @param  function the function that gets the {@code
+		 *         NestedCollectionRoutes} of a nested resource of the current
+		 *         resource
 		 * @return the builder's following step
+		 * @review
 		 */
 		public BuildStep<S> nestedCollectionRoutesFunction(
 			ThrowableFunction<String, NestedCollectionRoutes<T, S, Object>>
@@ -188,10 +195,12 @@ public interface BatchEndpointBuilder {
 
 		/**
 		 * Adds information to the builder about the supplier that provides the
-		 * current resource's {@link Representor}.
+		 * {@code Representor} of the current resource.
 		 *
-		 * @param  supplier the supplier
+		 * @param  supplier the supplier that provides the {@code Representor}
+		 *         of the current resource
 		 * @return the builder's following step
+		 * @review
 		 */
 		public CollectionRoutesSupplierStep<T, S> representorSupplier(
 			ThrowableSupplier<Representor<T>> supplier);
@@ -202,10 +211,11 @@ public interface BatchEndpointBuilder {
 	public interface RequestStep<T, S> {
 
 		/**
-		 * Adds information to the builder about the current HTTP request.
+		 * Adds information about the current request
 		 *
 		 * @param  httpServletRequest the current HTTP request
 		 * @return the builder's following step
+		 * @review
 		 */
 		public SingleModelFunctionStep<T, S> httpServletRequest(
 			HttpServletRequest httpServletRequest);
@@ -217,10 +227,12 @@ public interface BatchEndpointBuilder {
 
 		/**
 		 * Adds information to the builder about the function that gets the
-		 * {@link SingleModel} with a certain ID.
+		 * {@code SingleModel} with a certain ID.
 		 *
-		 * @param  function the function
+		 * @param  function the function that gets the {@code SingleModel} with
+		 *         a certain ID
 		 * @return the builder's following step
+		 * @review
 		 */
 		public RepresentorSupplierStep<T, S> singleModelFunction(
 			Function<String, Try<SingleModel<T>>> function);

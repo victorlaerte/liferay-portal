@@ -30,21 +30,24 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * Writes a {@link BatchResult}.
+ * Writes a batch result.
  *
  * @author Alejandro Hernández
  * @param  <T> the type of the model's identifier (e.g., {@code Long}, {@code
  *         String}, etc.)
+ * @review
  */
 public class BatchResultWriter<T> {
 
 	/**
-	 * Writes the handled batch result to a string. If no {@code Representor}
-	 * exists for the resource, this method returns {@code Optional#empty()}.
+	 * Writes the handled {@link BatchResult} to a string. If no {@code
+	 * Representor} exists for the resource, this method returns {@code
+	 * Optional#empty()}.
 	 *
-	 * @return the batch result's representation, if the {@code Representor}
-	 *         exists for the resource; returns {@code Optional#empty()}
-	 *         otherwise
+	 * @return the representation of the {@code BatchResult}, if the {@code
+	 *         Representor} exists for the resource; returns {@code
+	 *         Optional#empty()} otherwise
+	 * @review
 	 */
 	public Optional<String> write() {
 		Optional<Representor<Object>> optional = _representorFunction.apply(
@@ -96,14 +99,17 @@ public class BatchResultWriter<T> {
 
 	/**
 	 * Creates {@code BatchResultWriter} instances.
+	 *
+	 * @review
 	 */
 	public interface Builder {
 
 		/**
-		 * Adds information to the builder about the page being written.
+		 * Adds information about the page being written to the builder.
 		 *
 		 * @param  batchResult the page being written
 		 * @return the updated builder
+		 * @review
 		 */
 		public static <T> BatchResultMessageMapperStep<T> batchResult(
 			BatchResult<T> batchResult) {
@@ -121,8 +127,10 @@ public class BatchResultWriter<T> {
 			 * Adds information to the builder about the {@link
 			 * BatchResultMessageMapper}.
 			 *
-			 * @param  batchResultMessageMapper the batch result message mapper
+			 * @param  batchResultMessageMapper the {@code
+			 *         BatchResultMessageMapper}
 			 * @return the updated builder
+			 * @review
 			 */
 			public PathFunctionStep<T> batchResultMessageMapper(
 				BatchResultMessageMapper<T> batchResultMessageMapper);
@@ -135,7 +143,8 @@ public class BatchResultWriter<T> {
 			 * Constructs and returns a {@code BatchResultWriter} instance with
 			 * the information provided to the builder.
 			 *
-			 * @return the {@code BatchResultWriter}
+			 * @return the {@code BatchResultWriter} instance
+			 * @review
 			 */
 			public BatchResultWriter<T> build();
 
@@ -150,6 +159,7 @@ public class BatchResultWriter<T> {
 			 * @param  pathFunction the function to map an identifier to a
 			 *         {@code Path}
 			 * @return the updated builder
+			 * @review
 			 */
 			public RepresentorFunctionStep<T> pathFunction(
 				PathFunction pathFunction);
@@ -163,8 +173,9 @@ public class BatchResultWriter<T> {
 			 * class's {@link Representor}.
 			 *
 			 * @param  representorFunction the function that gets a class's
-			 *         {@link Representor}
+			 *         {@code Representor}
 			 * @return the updated builder
+			 * @review
 			 */
 			public RequestInfoStep<T> representorFunction(
 				Function<String, Optional<Representor<Object>>>
@@ -181,6 +192,7 @@ public class BatchResultWriter<T> {
 			 *         This can be created by using a {@link
 			 *         RequestInfo.Builder}
 			 * @return the updated builder
+			 * @review
 			 */
 			public BuildStep<T> requestInfo(RequestInfo requestInfo);
 

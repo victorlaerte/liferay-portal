@@ -32,9 +32,21 @@ public class CreateOperation implements Operation {
 	}
 
 	public CreateOperation(Form form, String resourceName, String uri) {
+		this(form, resourceName, uri, null);
+	}
+
+	public CreateOperation(
+		Form form, String resourceName, String uri, String custom) {
+
 		_form = form;
 		_resourceName = resourceName;
 		_uri = uri;
+		_custom = custom;
+	}
+
+	@Override
+	public String getCustom() {
+		return _custom;
 	}
 
 	@Override
@@ -49,7 +61,7 @@ public class CreateOperation implements Operation {
 
 	@Override
 	public String getName() {
-		return _resourceName + "/create";
+		return _resourceName + "/" + (isCustom() ? _custom : "create");
 	}
 
 	@Override
@@ -62,6 +74,16 @@ public class CreateOperation implements Operation {
 		return false;
 	}
 
+	@Override
+	public boolean isCustom() {
+		if (_custom != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private final String _custom;
 	private final Form _form;
 	private final String _resourceName;
 	private final String _uri;

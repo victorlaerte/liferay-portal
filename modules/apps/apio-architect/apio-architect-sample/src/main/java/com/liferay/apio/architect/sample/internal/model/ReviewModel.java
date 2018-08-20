@@ -18,6 +18,7 @@ package com.liferay.apio.architect.sample.internal.model;
  * Represents a review. This is a mock class for sample purposes only.
  *
  * @author Alejandro Hernández
+ * @review
  */
 public class ReviewModel {
 
@@ -27,18 +28,20 @@ public class ReviewModel {
 	}
 
 	/**
-	 * Returns the review's body.
+	 * Returns the body of the review.
 	 *
-	 * @return the review's body
+	 * @return the body of the review
+	 * @review
 	 */
 	public String getBody() {
 		return _body;
 	}
 
 	/**
-	 * Returns the review's rating.
+	 * Returns the rating of this review.
 	 *
-	 * @return the review's rating
+	 * @return the rating of this review
+	 * @review
 	 */
 	public RatingModel getRatingModel() {
 		return _ratingModel;

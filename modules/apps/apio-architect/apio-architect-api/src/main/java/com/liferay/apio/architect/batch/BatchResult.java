@@ -17,10 +17,11 @@ package com.liferay.apio.architect.batch;
 import java.util.List;
 
 /**
- * Represents the result of a batch operation.
+ * Instances of this interface represent the result of a batch operation.
  *
  * @author Alejandro Hernández
  * @author Zoltán Takács
+ * @review
  */
 public class BatchResult<T> {
 
@@ -33,14 +34,17 @@ public class BatchResult<T> {
 	/**
 	 * Returns the list of identifiers created in the batch operation.
 	 *
-	 * @return the list of identifiers
+	 * @return the list of identifiers created in the batch operation
+	 * @review
 	 */
 	public List<T> getIdentifiers() {
 		return _identifiers;
 	}
 
 	/**
-	 * The name of the elements' resource created in the batch operation.
+	 * The name of the resource of the elements created in the batch operation
+	 *
+	 * @review
 	 */
 	public final String resourceName;
 

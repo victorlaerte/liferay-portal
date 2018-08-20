@@ -37,6 +37,7 @@ import org.osgi.service.component.annotations.Reference;
  * that corresponds to the media type.
  *
  * @author Alejandro Hernández
+ * @review
  */
 @Component(
 	property = {

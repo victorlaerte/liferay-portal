@@ -28,13 +28,14 @@ import javax.ws.rs.core.Response;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * Provides an example of a JAX-RS resource to show how to hook new resources to
- * the {@code ApioApplication}. This class also provides an endpoint for serving
- * {@link PersonModel} avatars that will be added to their {@code Representor}
- * via {@link
- * com.liferay.apio.architect.representor.BaseRepresentor.BaseBuilder.BaseFirstStep#addRelativeURL}.
+ * This example of JAX-RS resource shows how to hook new resources to the {@code
+ * ApioApplication}, as well as providing an endpoint for serving {@code
+ * PersonModel} avatars, that will be added to their {@code Representor} via
+ * {@link
+ * com.liferay.apio.architect.representor.BaseRepresentor.BaseBuilder.BaseFirstStep#addRelativeURL}
  *
  * @author Alejandro Hernández
+ * @review
  */
 @Component(
 	immediate = true,
@@ -48,11 +49,12 @@ import org.osgi.service.component.annotations.Component;
 public class AvatarResource {
 
 	/**
-	 * Returns a {@code Response} containing the avatar of the person identified
-	 * with the provided ID.
+	 * Returns a {@link Response} containing the avatar of the person identified
+	 * with the provided {@code ID}.
 	 *
 	 * @param  id the ID of the {@code PersonModel}
-	 * @return the response containing the person's avatar data
+	 * @return a {@code Response} containing the person avatar data
+	 * @review
 	 */
 	@GET
 	@Path("{id}")

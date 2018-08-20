@@ -19,15 +19,16 @@ import com.liferay.apio.architect.representor.NestedRepresentor;
 import java.util.List;
 
 /**
- * Represents a representor's nested list field.
+ * Instances of this class represent a {@code Representor} nested list field.
  *
  * @author Alejandro Hernández
+ * @review
  */
 public interface NestedListFieldFunction<T, S>
 	extends FieldFunction<T, List<S>> {
 
 	/**
-	 * Returns the field's {@link NestedRepresentor}.
+	 * Returns the field's {@code NestedRepresentor}.
 	 *
 	 * @return the field's {@code NestedRepresentor}
 	 */
