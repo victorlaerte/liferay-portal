@@ -14,7 +14,7 @@
 
 package com.liferay.forms.apio.internal.architect.route;
 
-import com.liferay.apio.architect.customactions.PostRoute;
+import com.liferay.apio.architect.custom.actions.PostRoute;
 
 /**
  * @author Javier Gamarra

@@ -16,9 +16,9 @@ package com.liferay.forms.apio.internal.architect.resource;
 
 import static java.util.function.Function.identity;
 
-import com.liferay.apio.architect.customactions.PostRoute;
+import com.liferay.apio.architect.custom.actions.PostRoute;
 import com.liferay.apio.architect.functional.Try;
-import com.liferay.apio.architect.language.Language;
+import com.liferay.apio.architect.language.AcceptLanguage;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
 import com.liferay.apio.architect.representor.NestedRepresentor;
@@ -92,9 +92,9 @@ public class FormInstanceNestedCollectionResource
 			_ddmFormInstanceService::getFormInstance
 		).addCustomRoute(
 			evaluateContextRoute, this::_evaluateContext,
+			DDMFormRenderingContext.class, AcceptLanguage.class,
 			FormContextIdentifier.class, (credentials, aLong) -> true,
-			FormContextForm::buildForm, DDMFormRenderingContext.class,
-			Language.class
+			FormContextForm::buildForm
 		).addCustomRoute(
 			uploadFileRoute, this::_uploadFile, MediaObjectIdentifier.class,
 			(credentials, aLong) -> true, MediaObjectCreatorForm::buildForm
@@ -196,7 +196,8 @@ public class FormInstanceNestedCollectionResource
 
 	private FormContextWrapper _evaluateContext(
 		Long ddmFormInstanceId, FormContextForm formContextForm,
-		DDMFormRenderingContext ddmFormRenderingContext, Language language) {
+		DDMFormRenderingContext ddmFormRenderingContext,
+		AcceptLanguage language) {
 
 		String fieldValues = formContextForm.getFieldValues();
 		Locale locale = language.getPreferredLocale();

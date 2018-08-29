@@ -25,6 +25,7 @@ import com.liferay.apio.architect.representor.Representor;
 import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
+import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
@@ -181,13 +182,6 @@ public class FormInstanceRecordNestedCollectionResource
 		ServiceContext serviceContext = calculateServiceContextAttributes(
 			serviceContextWrapper, formInstanceRecordForm.isDraft());
 
-		DDMForm ddmForm = ddmStructure.getDDMForm();
-
-		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
-
-		_uploadFileHelper.linkFiles(
-			ddmFormFields, ddmFormValues.getDDMFormFieldValues());
-
 		return _ddmFormInstanceRecordService.addFormInstanceRecord(
 			ddmFormInstance.getGroupId(), ddmFormInstance.getFormInstanceId(),
 			ddmFormValues, serviceContext);
@@ -254,7 +248,7 @@ public class FormInstanceRecordNestedCollectionResource
 	private DDMFormInstanceService _ddmFormInstanceService;
 
 	@Reference
-	private UploadFileHelper _uploadFileHelper;
+	private DLAppService _dlAppService;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord)"
