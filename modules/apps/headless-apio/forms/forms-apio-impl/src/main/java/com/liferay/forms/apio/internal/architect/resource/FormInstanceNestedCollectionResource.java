@@ -36,12 +36,17 @@ import com.liferay.forms.apio.architect.identifier.FormContextIdentifier;
 import com.liferay.forms.apio.architect.identifier.FormInstanceIdentifier;
 import com.liferay.forms.apio.architect.identifier.StructureIdentifier;
 import com.liferay.forms.apio.internal.architect.form.FormContextForm;
+import com.liferay.forms.apio.internal.architect.form.MediaObjectCreatorForm;
 import com.liferay.forms.apio.internal.architect.route.EvaluateContextRoute;
+import com.liferay.forms.apio.internal.architect.route.UploadFileRoute;
 import com.liferay.forms.apio.internal.helper.EvaluateContextHelper;
+import com.liferay.forms.apio.internal.helper.UploadFileHelper;
 import com.liferay.forms.apio.internal.model.FormContextWrapper;
 import com.liferay.forms.apio.internal.util.FormInstanceRepresentorUtil;
+import com.liferay.media.object.apio.architect.identifier.MediaObjectIdentifier;
 import com.liferay.person.apio.architect.identifier.PersonIdentifier;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 
 import java.util.List;
 import java.util.Locale;
@@ -82,6 +87,8 @@ public class FormInstanceNestedCollectionResource
 
 		PostRoute evaluateContextRoute = new EvaluateContextRoute();
 
+		PostRoute uploadFileRoute = new UploadFileRoute();
+
 		return builder.addGetter(
 			_ddmFormInstanceService::getFormInstance
 		).addCustomRoute(
@@ -89,6 +96,9 @@ public class FormInstanceNestedCollectionResource
 			DDMFormRenderingContext.class, AcceptLanguage.class,
 			FormContextIdentifier.class, (credentials, aLong) -> true,
 			FormContextForm::buildForm
+		).addCustomRoute(
+			uploadFileRoute, this::_uploadFile, MediaObjectIdentifier.class,
+			(credentials, aLong) -> true, MediaObjectCreatorForm::buildForm
 		).build();
 	}
 
@@ -218,10 +228,26 @@ public class FormInstanceNestedCollectionResource
 		return new PageItems<>(ddmFormInstances, count);
 	}
 
+	private FileEntry _uploadFile(
+		Long ddmFormInstanceId, MediaObjectCreatorForm mediaObjectCreatorForm) {
+
+		return Try.fromFallible(
+			() -> _ddmFormInstanceService.getFormInstance(ddmFormInstanceId)
+		).map(
+			ddmFormInstance -> _uploadFileHelper.uploadFile(
+				ddmFormInstance, mediaObjectCreatorForm)
+		).orElse(
+			null
+		);
+	}
+
 	@Reference
 	private DDMFormInstanceService _ddmFormInstanceService;
 
 	@Reference
 	private EvaluateContextHelper _evaluateContextHelper;
+
+	@Reference
+	private UploadFileHelper _uploadFileHelper;
 
 }
