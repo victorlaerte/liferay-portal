@@ -15,6 +15,7 @@
 package com.liferay.forms.apio.internal.helper;
 
 import static com.liferay.forms.apio.internal.util.LocalizedValueUtil.getLocalizedString;
+import static java.util.function.Function.identity;
 
 import com.liferay.apio.architect.functional.Try;
 import com.liferay.apio.architect.representor.NestedRepresentor;
@@ -33,6 +34,7 @@ import com.liferay.structure.apio.architect.util.StructureRepresentorBuilderHelp
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -124,9 +126,7 @@ public class FormStructureRepresentorBuilderHelper {
 		).addBoolean(
 			"transient", DDMFormField::isTransient
 		).addNested(
-			"grid", ddmFormField -> ddmFormField, this::_buildDDMFormField
-		).addString(
-			"indexType", DDMFormField::getIndexType
+			"grid", identity(), this::_buildDDMFormField
 		);
 
 		return ddmFormFieldFirstStepBuilder;
@@ -138,8 +138,6 @@ public class FormStructureRepresentorBuilderHelper {
 
 		return builder.types(
 			"FormSuccessPageSettings"
-		).addBoolean(
-			"enabled", DDMFormSuccessPageSettings::isEnabled
 		).addLocalizedStringByLocale(
 			"headline", getLocalizedString(DDMFormSuccessPageSettings::getTitle)
 		).addLocalizedStringByLocale(
@@ -191,9 +189,15 @@ public class FormStructureRepresentorBuilderHelper {
 	private DDMFormSuccessPageSettings _getDDMFormSuccessPageSettings(
 		DDMStructure ddmStructure) {
 
-		DDMForm ddmForm = ddmStructure.getDDMForm();
-
-		return ddmForm.getDDMFormSuccessPageSettings();
+		return Optional.of(
+			ddmStructure.getDDMForm()
+		).map(
+			DDMForm::getDDMFormSuccessPageSettings
+		).filter(
+			DDMFormSuccessPageSettings::isEnabled
+		).orElse(
+			null
+		);
 	}
 
 	private DDMStructureVersion _getDDMStructureVersion(
