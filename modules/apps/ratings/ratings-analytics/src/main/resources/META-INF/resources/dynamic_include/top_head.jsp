@@ -25,6 +25,7 @@
 				{
 					className: event.className,
 					classPK: event.classPK,
+					ratingType: event.ratingType,
 					score: event.score
 				}
 			);
