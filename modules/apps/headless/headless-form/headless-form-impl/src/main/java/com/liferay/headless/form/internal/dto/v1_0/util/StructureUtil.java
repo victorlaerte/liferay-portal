@@ -87,14 +87,16 @@ public class StructureUtil {
 				id = ddmStructure.getStructureId();
 				name = ddmStructure.getName(locale);
 
-				successPage = new SuccessPage() {
-					{
-						description = _toString(
-							ddmFormSuccessPageSettings.getBody(), locale);
-						headline = _toString(
-							ddmFormSuccessPageSettings.getTitle(), locale);
-					}
-				};
+				if (ddmFormSuccessPageSettings.isEnabled()) {
+					successPage = new SuccessPage() {
+						{
+							description = _toString(
+								ddmFormSuccessPageSettings.getBody(), locale);
+							headline = _toString(
+								ddmFormSuccessPageSettings.getTitle(), locale);
+						}
+					};
+				}
 			}
 		};
 	}
@@ -194,7 +196,7 @@ public class StructureUtil {
 									value = entry.getKey();
 								}
 							},
-							Map.Entry.class);
+							Column.class);
 
 						rows = transform(
 							_toLocalizedValueMapEntry(ddmFormField, "rows"),
@@ -204,7 +206,7 @@ public class StructureUtil {
 									value = entry.getKey();
 								}
 							},
-							Map.Entry.class);
+							Row.class);
 					}
 				};
 				hasFormRules = _hasFormRulesFunction(ddmFormField);
@@ -296,14 +298,20 @@ public class StructureUtil {
 	private static Map.Entry<String, LocalizedValue>[]
 		_toLocalizedValueMapEntry(DDMFormField ddmFormField, String element) {
 
-		DDMFormFieldOptions ddmFormFieldOptions =
-			(DDMFormFieldOptions)ddmFormField.getProperty(element);
+		Object property = ddmFormField.getProperty(element);
 
-		Map<String, LocalizedValue> options = ddmFormFieldOptions.getOptions();
+		if (property != null) {
+			DDMFormFieldOptions ddmFormFieldOptions =
+				(DDMFormFieldOptions) property;
 
-		Set<Map.Entry<String, LocalizedValue>> entries = options.entrySet();
+			Map<String, LocalizedValue> options = ddmFormFieldOptions.getOptions();
 
-		return entries.toArray(new Map.Entry[0]);
+			Set<Map.Entry<String, LocalizedValue>> entries = options.entrySet();
+
+			return entries.toArray(new Map.Entry[entries.size()]);
+		}
+
+		return new Map.Entry[0];
 	}
 
 	private static String _toString(
