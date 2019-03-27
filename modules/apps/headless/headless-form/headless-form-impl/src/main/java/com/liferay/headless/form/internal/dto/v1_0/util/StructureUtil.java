@@ -41,6 +41,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -86,19 +87,28 @@ public class StructureUtil {
 					FormPage.class);
 				id = ddmStructure.getStructureId();
 				name = ddmStructure.getName(locale);
-
-				if (ddmFormSuccessPageSettings.isEnabled()) {
-					successPage = new SuccessPage() {
-						{
-							description = _toString(
-								ddmFormSuccessPageSettings.getBody(), locale);
-							headline = _toString(
-								ddmFormSuccessPageSettings.getTitle(), locale);
-						}
-					};
-				}
+				successPage =
+					_getSuccessPage(ddmFormSuccessPageSettings, locale);
 			}
 		};
+	}
+
+	private static SuccessPage _getSuccessPage(
+		DDMFormSuccessPageSettings ddmFormSuccessPageSettings, Locale locale) {
+
+		if (ddmFormSuccessPageSettings.isEnabled()) {
+
+			return new SuccessPage() {
+				{
+					description = _toString(
+						ddmFormSuccessPageSettings.getBody(), locale);
+					headline = _toString(
+						ddmFormSuccessPageSettings.getTitle(), locale);
+				}
+			};
+		}
+
+		return null;
 	}
 
 	private static List<String> _getFieldNames(
@@ -167,6 +177,9 @@ public class StructureUtil {
 	private static String _toDataType(DDMFormField ddmFormField) {
 		String type = ddmFormField.getType();
 
+		if ("date".equals(type)) {
+			return "date";
+		}
 		if (DDMFormFieldType.DOCUMENT_LIBRARY.equals(type)) {
 			return "document";
 		}
@@ -175,6 +188,9 @@ public class StructureUtil {
 		}
 		else if (DDMFormFieldType.LINK_TO_PAGE.equals(type)) {
 			return "url";
+		}
+		else if ("paragraph".equals(type)) {
+			return "paragraph";
 		}
 		else if (DDMFormFieldType.RADIO.equals(type)) {
 			return "string";
@@ -220,6 +236,7 @@ public class StructureUtil {
 				repeatable = ddmFormField.isRepeatable();
 				required = ddmFormField.isRequired();
 				showLabel = ddmFormField.isShowLabel();
+				text = _getText(ddmFormField, locale);
 
 				setDataType(_toDataType(ddmFormField));
 				setInputControl(_toInputControl(ddmFormField));
@@ -252,6 +269,15 @@ public class StructureUtil {
 		};
 	}
 
+	private static String _getText(DDMFormField ddmFormField, Locale locale) {
+		Object textProperty = ddmFormField.getProperty("text");
+
+		if (textProperty instanceof LocalizedValue) {
+			return _toString((LocalizedValue) textProperty, locale);
+		}
+
+		return null;
+	}
 	private static FormPage _toFormPage(
 		DDMFormLayoutPage ddmFormLayoutPage, DDMStructure ddmStructure,
 		Locale locale) {
