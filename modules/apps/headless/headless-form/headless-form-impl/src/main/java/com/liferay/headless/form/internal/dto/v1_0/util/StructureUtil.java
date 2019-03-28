@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
@@ -37,11 +38,12 @@ import com.liferay.headless.form.dto.v1_0.Grid;
 import com.liferay.headless.form.dto.v1_0.Option;
 import com.liferay.headless.form.dto.v1_0.Row;
 import com.liferay.headless.form.dto.v1_0.SuccessPage;
+import com.liferay.headless.form.dto.v1_0.Validation;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -87,28 +89,10 @@ public class StructureUtil {
 					FormPage.class);
 				id = ddmStructure.getStructureId();
 				name = ddmStructure.getName(locale);
-				successPage =
-					_getSuccessPage(ddmFormSuccessPageSettings, locale);
+				successPage = _getSuccessPage(
+					ddmFormSuccessPageSettings, locale);
 			}
 		};
-	}
-
-	private static SuccessPage _getSuccessPage(
-		DDMFormSuccessPageSettings ddmFormSuccessPageSettings, Locale locale) {
-
-		if (ddmFormSuccessPageSettings.isEnabled()) {
-
-			return new SuccessPage() {
-				{
-					description = _toString(
-						ddmFormSuccessPageSettings.getBody(), locale);
-					headline = _toString(
-						ddmFormSuccessPageSettings.getTitle(), locale);
-				}
-			};
-		}
-
-		return null;
 	}
 
 	private static List<String> _getFieldNames(
@@ -131,6 +115,38 @@ public class StructureUtil {
 		).collect(
 			Collectors.toList()
 		);
+	}
+
+	private static Grid _getGrid(DDMFormField ddmFormField, Locale locale) {
+		String type = ddmFormField.getType();
+
+		if (type.equals("grid")) {
+			return new Grid() {
+				{
+					columns = transform(
+						_toLocalizedValueMapEntry(ddmFormField, "columns"),
+						entry -> new Column() {
+							{
+								label = _toString(entry.getValue(), locale);
+								value = entry.getKey();
+							}
+						},
+						Column.class);
+
+					rows = transform(
+						_toLocalizedValueMapEntry(ddmFormField, "rows"),
+						entry -> new Row() {
+							{
+								label = _toString(entry.getValue(), locale);
+								value = entry.getKey();
+							}
+						},
+						Row.class);
+				}
+			};
+		}
+
+		return null;
 	}
 
 	private static List<String> _getNestedFieldNames(
@@ -161,6 +177,51 @@ public class StructureUtil {
 		);
 	}
 
+	private static SuccessPage _getSuccessPage(
+		DDMFormSuccessPageSettings ddmFormSuccessPageSettings, Locale locale) {
+
+		if (ddmFormSuccessPageSettings.isEnabled()) {
+			return new SuccessPage() {
+				{
+					description = _toString(
+						ddmFormSuccessPageSettings.getBody(), locale);
+					headline = _toString(
+						ddmFormSuccessPageSettings.getTitle(), locale);
+				}
+			};
+		}
+
+		return null;
+	}
+
+	private static String _getText(DDMFormField ddmFormField, Locale locale) {
+		Object textProperty = ddmFormField.getProperty("text");
+
+		if (textProperty instanceof LocalizedValue) {
+			return _toString((LocalizedValue)textProperty, locale);
+		}
+
+		return null;
+	}
+
+	private static Validation _getValidation(DDMFormField ddmFormField) {
+		Object obj = ddmFormField.getProperty("validation");
+
+		if (obj instanceof DDMFormFieldValidation) {
+			DDMFormFieldValidation ddmFormFieldValidation =
+				(DDMFormFieldValidation)obj;
+
+			return new Validation() {
+				{
+					expression = ddmFormFieldValidation.getExpression();
+					errorMessage = ddmFormFieldValidation.getErrorMessage();
+				}
+			};
+		}
+
+		return null;
+	}
+
 	private static Boolean _hasFormRulesFunction(DDMFormField ddmFormField) {
 		DDMForm ddmForm = ddmFormField.getDDMForm();
 
@@ -174,26 +235,26 @@ public class StructureUtil {
 		);
 	}
 
+	private static Boolean _showAsSwitcher(DDMFormField ddmFormField) {
+		String type = ddmFormField.getType();
+
+		if (DDMFormFieldType.CHECKBOX.equals(type) ||
+			DDMFormFieldType.CHECKBOX_MULTIPLE.equals(type)) {
+
+			return GetterUtil.getBoolean(
+				ddmFormField.getProperty("showAsSwitcher"));
+		}
+
+		return null;
+	}
+
 	private static String _toDataType(DDMFormField ddmFormField) {
 		String type = ddmFormField.getType();
 
-		if ("date".equals(type)) {
-			return "date";
-		}
-		if (DDMFormFieldType.DOCUMENT_LIBRARY.equals(type)) {
-			return "document";
-		}
-		else if (DDMFormFieldType.JOURNAL_ARTICLE.equals(type)) {
-			return "structuredContent";
-		}
-		else if (DDMFormFieldType.LINK_TO_PAGE.equals(type)) {
-			return "url";
-		}
-		else if ("paragraph".equals(type)) {
-			return "paragraph";
-		}
-		else if (DDMFormFieldType.RADIO.equals(type)) {
-			return "string";
+		if (type.equals("date") || type.equals("document_library") ||
+			type.equals("paragraph")) {
+
+			return type;
 		}
 
 		return ddmFormField.getDataType();
@@ -202,29 +263,7 @@ public class StructureUtil {
 	private static Field _toField(DDMFormField ddmFormField, Locale locale) {
 		return new Field() {
 			{
-				grid = new Grid() {
-					{
-						columns = transform(
-							_toLocalizedValueMapEntry(ddmFormField, "columns"),
-							entry -> new Column() {
-								{
-									label = _toString(entry.getValue(), locale);
-									value = entry.getKey();
-								}
-							},
-							Column.class);
-
-						rows = transform(
-							_toLocalizedValueMapEntry(ddmFormField, "rows"),
-							entry -> new Row() {
-								{
-									label = _toString(entry.getValue(), locale);
-									value = entry.getKey();
-								}
-							},
-							Row.class);
-					}
-				};
+				grid = _getGrid(ddmFormField, locale);
 				hasFormRules = _hasFormRulesFunction(ddmFormField);
 				immutable = ddmFormField.isTransient();
 				label = _toString(ddmFormField.getLabel(), locale);
@@ -235,11 +274,13 @@ public class StructureUtil {
 					ddmFormField.getPredefinedValue(), locale);
 				repeatable = ddmFormField.isRepeatable();
 				required = ddmFormField.isRequired();
+				showAsSwitcher = _showAsSwitcher(ddmFormField);
 				showLabel = ddmFormField.isShowLabel();
 				text = _getText(ddmFormField, locale);
+				validation = _getValidation(ddmFormField);
 
 				setDataType(_toDataType(ddmFormField));
-				setInputControl(_toInputControl(ddmFormField));
+				setInputControl(ddmFormField.getType());
 				setLabel(_toString(ddmFormField.getLabel(), locale));
 				setLocalizable(ddmFormField.isLocalizable());
 				setMultiple(ddmFormField.isMultiple());
@@ -269,15 +310,6 @@ public class StructureUtil {
 		};
 	}
 
-	private static String _getText(DDMFormField ddmFormField, Locale locale) {
-		Object textProperty = ddmFormField.getProperty("text");
-
-		if (textProperty instanceof LocalizedValue) {
-			return _toString((LocalizedValue) textProperty, locale);
-		}
-
-		return null;
-	}
 	private static FormPage _toFormPage(
 		DDMFormLayoutPage ddmFormLayoutPage, DDMStructure ddmStructure,
 		Locale locale) {
@@ -306,21 +338,6 @@ public class StructureUtil {
 		};
 	}
 
-	private static String _toInputControl(DDMFormField ddmFormField) {
-		String type = ddmFormField.getType();
-
-		if (DDMFormFieldType.CHECKBOX.equals(type) ||
-			DDMFormFieldType.RADIO.equals(type) ||
-			DDMFormFieldType.SELECT.equals(type) ||
-			DDMFormFieldType.TEXT.equals(type) ||
-			DDMFormFieldType.TEXT_AREA.equals(type)) {
-
-			return type;
-		}
-
-		return null;
-	}
-
 	private static Map.Entry<String, LocalizedValue>[]
 		_toLocalizedValueMapEntry(DDMFormField ddmFormField, String element) {
 
@@ -328,9 +345,10 @@ public class StructureUtil {
 
 		if (property != null) {
 			DDMFormFieldOptions ddmFormFieldOptions =
-				(DDMFormFieldOptions) property;
+				(DDMFormFieldOptions)property;
 
-			Map<String, LocalizedValue> options = ddmFormFieldOptions.getOptions();
+			Map<String, LocalizedValue> options =
+				ddmFormFieldOptions.getOptions();
 
 			Set<Map.Entry<String, LocalizedValue>> entries = options.entrySet();
 
