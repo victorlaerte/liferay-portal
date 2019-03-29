@@ -300,22 +300,29 @@ public class FormRecordResourceImpl extends BaseFormRecordResourceImpl {
 	private FieldValue _toFieldValues(DDMFormFieldValue ddmFormFieldValue)
 		throws Exception {
 
-		String value = _getLocalizedString(ddmFormFieldValue.getValue());
+		Value value = ddmFormFieldValue.getValue();
 
-		FileEntry fileEntry = _getFileEntryId(value, _dlAppService);
+		if (value != null) {
+			String localizedString = _getLocalizedString(value);
 
-		return new FieldValue() {
-			{
-				if (fileEntry != null) {
-					document = FormDocumentUtil.toDocument(
-						fileEntry, _dlurlHelper);
-					documentId = fileEntry.getFileEntryId();
+			FileEntry fileEntry = _getFileEntryId(
+				localizedString, _dlAppService);
+
+			return new FieldValue() {
+				{
+					if (fileEntry != null) {
+						document = FormDocumentUtil.toDocument(
+							fileEntry, _dlurlHelper);
+						documentId = fileEntry.getFileEntryId();
+					}
+
+					name = ddmFormFieldValue.getName();
+					value = localizedString;
 				}
+			};
+		}
 
-				name = ddmFormFieldValue.getName();
-				value = _getLocalizedString(ddmFormFieldValue.getValue());
-			}
-		};
+		return null;
 	}
 
 	private FormRecord _toFormRecord(
