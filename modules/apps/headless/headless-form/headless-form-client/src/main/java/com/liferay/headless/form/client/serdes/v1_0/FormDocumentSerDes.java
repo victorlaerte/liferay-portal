@@ -105,6 +105,16 @@ public class FormDocumentSerDes {
 			sb.append(formDocument.getId());
 		}
 
+		if (formDocument.getSiteId() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"siteId\": ");
+
+			sb.append(formDocument.getSiteId());
+		}
+
 		if (formDocument.getSizeInBytes() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -173,6 +183,13 @@ public class FormDocumentSerDes {
 			map.put("id", String.valueOf(formDocument.getId()));
 		}
 
+		if (formDocument.getSiteId() == null) {
+			map.put("siteId", null);
+		}
+		else {
+			map.put("siteId", String.valueOf(formDocument.getSiteId()));
+		}
+
 		if (formDocument.getSizeInBytes() == null) {
 			map.put("sizeInBytes", null);
 		}
@@ -234,6 +251,12 @@ public class FormDocumentSerDes {
 			else if (Objects.equals(jsonParserFieldName, "id")) {
 				if (jsonParserFieldValue != null) {
 					formDocument.setId(
+						Long.valueOf((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "siteId")) {
+				if (jsonParserFieldValue != null) {
+					formDocument.setSiteId(
 						Long.valueOf((String)jsonParserFieldValue));
 				}
 			}
